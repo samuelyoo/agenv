@@ -1,7 +1,9 @@
 import { Command } from "commander";
+import { summarizeRenderedDiff } from "../../fs/diff.js";
 import { loadManifest } from "../../manifest/load.js";
 import { buildGenerationPlan } from "../../planner/build-plan.js";
 import type { AdapterTarget, OutputLayer, OutputScope } from "../../planner/output-map.js";
+import { renderPlanFiles } from "../../render/render-plan.js";
 import { formatCommandOutput, formatTextBlock, parseCommaList } from "../../utils/format.js";
 
 type DiffOptions = {
@@ -32,6 +34,41 @@ function compactObject<T extends Record<string, unknown>>(value: T): Partial<T> 
   ) as Partial<T>;
 }
 
+export type RunDiffOptions = {
+  cwd: string;
+  targets?: AdapterTarget[] | undefined;
+  layers?: OutputLayer[] | undefined;
+  scopes?: OutputScope[] | undefined;
+};
+
+export type RunDiffResult = {
+  command: "diff";
+  manifestPath: string;
+  plan: ReturnType<typeof buildGenerationPlan>;
+  summary: Awaited<ReturnType<typeof summarizeRenderedDiff>>;
+};
+
+export async function runDiff(options: RunDiffOptions): Promise<RunDiffResult> {
+  const { manifest, sharedPath } = await loadManifest(options.cwd);
+  const plan = buildGenerationPlan(
+    manifest,
+    compactObject({
+      targets: options.targets,
+      layers: options.layers,
+      scopes: options.scopes,
+    }),
+  );
+  const renderedFiles = renderPlanFiles(manifest, plan);
+  const summary = await summarizeRenderedDiff(options.cwd, renderedFiles);
+
+  return {
+    command: "diff",
+    manifestPath: sharedPath,
+    plan,
+    summary,
+  };
+}
+
 export function registerDiffCommand(program: Command): void {
   program
     .command("diff")
@@ -41,26 +78,24 @@ export function registerDiffCommand(program: Command): void {
     .option("--layer <list>", "limit diff to selected layers")
     .option("--scope <list>", "limit diff to shared or local scope")
     .action(async (options: DiffOptions) => {
-      const cwd = process.cwd();
-      const { manifest, sharedPath } = await loadManifest(cwd);
-      const plan = buildGenerationPlan(manifest, compactObject({
-        targets: parseTargets(options.targets),
-        layers: parseLayers(options.layer),
-        scopes: parseScopes(options.scope),
-      }));
+      const result = await runDiff({
+        cwd: process.cwd(),
+        ...compactObject({
+          targets: parseTargets(options.targets),
+          layers: parseLayers(options.layer),
+          scopes: parseScopes(options.scope),
+        }),
+      });
 
       const text = formatTextBlock([
-        `Manifest: ${sharedPath}`,
-        `Create/update candidates: ${plan.files.length}`,
-        `Warnings: ${plan.warnings.length}`,
+        `Manifest: ${result.manifestPath}`,
+        `Create: ${result.summary.create.length}`,
+        `Update: ${result.summary.update.length}`,
+        `Unchanged: ${result.summary.unchanged.length}`,
+        `Skip: ${result.summary.skip.length}`,
+        `Warnings: ${result.plan.warnings.length}`,
       ]);
 
-      const payload = {
-        command: "diff",
-        manifestPath: "ai-workspace.json",
-        summary: plan,
-      };
-
-      process.stdout.write(formatCommandOutput(text, payload, Boolean(options.json)));
+      process.stdout.write(formatCommandOutput(text, result, Boolean(options.json)));
     });
 }

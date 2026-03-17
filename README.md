@@ -2,41 +2,84 @@
 
 `agenv` is an npm package for bootstrapping a portable, reviewable AI workspace for dashboard development repositories.
 
-It is designed to help teams define one canonical AI workspace manifest and generate tool-specific outputs for supported coding assistants and MCP-compatible tooling.
+It helps a team define one canonical AI workspace manifest and turn that into tool-specific outputs for supported coding assistants and MCP-compatible tooling.
+
+## What It Does
+
+- inspects a dashboard-oriented repo
+- creates or loads `ai-workspace.json`
+- plans generated files for supported targets
+- generates shared docs and tool-specific files
+- supports Codex, Copilot, Claude, and MCP in the current MVP direction
+
+## Current Status
+
+This repo is no longer docs-only. It now includes:
+
+- a buildable TypeScript package scaffold
+- a CLI entrypoint and command shells
+- manifest schema, defaults, normalization, load, and save
+- repo inspection and stack hints
+- generation planning and warnings
+- a first real `generate` and `diff` path
+- unit and integration tests
+
+Still early:
+
+- interactive `init` is still shallow
+- generated file content is functional but not fully polished
+- `doctor` has structure but is not feature-complete yet
 
 ## Vision
 
 Set up a portable, reviewable AI coding environment for dashboard development in one command.
 
-## MVP Focus
+## Start Here
 
-- Dashboard-first setup flow
-- React + TypeScript, Next.js, and Vite React support
-- Canonical manifest generation
-- Generated outputs for Codex, Claude Code, GitHub Copilot, and MCP
-- Prompt packs, skills, and agent templates
-- CLI commands for `init`, `generate`, `diff`, `doctor`, and `templates list`
+If you are new to the repo, read these in order:
 
-## Planned Documents
+- contributor guide: [doc/getting-started.md](/Users/syoo/Documents/code/agenv-package/doc/getting-started.md)
+- product requirements: [doc/prd.md](/Users/syoo/Documents/code/agenv-package/doc/prd.md)
+- technical requirements: [doc/trd.md](/Users/syoo/Documents/code/agenv-package/doc/trd.md)
+- CLI contract: [doc/cli-spec.md](/Users/syoo/Documents/code/agenv-package/doc/cli-spec.md)
+- manifest contract: [doc/manifest-spec.md](/Users/syoo/Documents/code/agenv-package/doc/manifest-spec.md)
+- output map: [doc/output-map.md](/Users/syoo/Documents/code/agenv-package/doc/output-map.md)
+- adapter contract: [doc/adapter-contract.md](/Users/syoo/Documents/code/agenv-package/doc/adapter-contract.md)
+- implementation plan: [doc/implementation-plan.md](/Users/syoo/Documents/code/agenv-package/doc/implementation-plan.md)
 
-- Product requirements: [doc/prd.md](/Users/syoo/Documents/code/agenv%20package/doc/prd.md)
-- Technical requirements: [doc/trd.md](/Users/syoo/Documents/code/agenv%20package/doc/trd.md)
+## Development Commands
 
-## Proposed Package Shape
+```bash
+npm install
+npm test
+npm run typecheck
+npm run build
+node dist/cli/index.js --help
+```
+
+## Package Shape
 
 ```text
 src/
+  adapters/
+  cli/
+  detect/
+  doctor/
+  fs/
+  manifest/
+  planner/
+  render/
+  templates/
+  utils/
 doc/
 tests/
 ```
 
-## Next Build Steps
+## Best Next Step
 
-1. Create the CLI entrypoint and command routing.
-2. Implement the manifest schema and defaults.
-3. Add repo detection for supported dashboard stacks.
-4. Build the generation planner and first adapter.
+The strongest near-term path is to keep improving the first usable slice:
 
-## Naming Note
-
-The current folder name is `agenv package`, but the package and repository name should ideally be `agenv` or `agenv-bootstrapper` to avoid spaces and make npm/GitHub naming cleaner.
+1. make generated files richer and less placeholder-like
+2. deepen `init --yes` and preview behavior
+3. expand `doctor`
+4. add more integration coverage around real CLI behavior
