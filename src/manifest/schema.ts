@@ -1,0 +1,104 @@
+import { z } from "zod";
+
+export const frameworkSchema = z.enum(["react", "nextjs", "vite-react"]);
+export const setupDepthSchema = z.enum(["recommended", "semi-custom", "advanced"]);
+export const setupModeSchema = z.enum(["base", "skills", "agents", "full"]);
+export const setupScopeSchema = z.enum(["shared", "local", "mixed"]);
+export const promptModeSchema = z.enum(["none", "starter", "master", "pack"]);
+
+export const manifestSchema = z
+  .object({
+    schemaVersion: z.string(),
+    project: z
+      .object({
+        name: z.string().min(1),
+        type: z.literal("dashboard"),
+        framework: frameworkSchema,
+        language: z.literal("ts"),
+      })
+      .strict(),
+    setup: z
+      .object({
+        depth: setupDepthSchema,
+        mode: setupModeSchema,
+        scope: setupScopeSchema,
+      })
+      .strict(),
+    targets: z
+      .object({
+        copilot: z.boolean(),
+        claude: z.boolean(),
+        codex: z.boolean(),
+        mcp: z.boolean(),
+      })
+      .strict(),
+    dashboard: z
+      .object({
+        styling: z.enum(["tailwind", "custom"]),
+        components: z.enum(["shadcn-ui", "custom-design-system"]),
+        dataFetching: z.enum(["tanstack-query", "custom"]),
+        tables: z.enum(["tanstack-table", "ag-grid", "custom"]),
+        charts: z.enum(["recharts", "echarts", "nivo", "custom"]),
+        forms: z.enum(["react-hook-form-zod", "custom"]),
+        testing: z.array(z.enum(["vitest", "rtl", "playwright"])).min(1),
+        state: z.enum(["local-first", "zustand"]),
+      })
+      .strict(),
+    conventions: z
+      .object({
+        routing: z.string().optional(),
+        folderStructure: z.string().optional(),
+        accessibility: z.boolean(),
+        responsive: z.boolean(),
+        authModel: z.enum(["rbac", "none", "custom"]).optional(),
+      })
+      .strict(),
+    instructions: z
+      .object({
+        codingStyle: z.array(z.string()).min(1),
+        reviewRules: z.array(z.string()).min(1),
+      })
+      .strict(),
+    generated: z
+      .object({
+        prompts: promptModeSchema,
+        skills: z.boolean(),
+        agents: z.boolean(),
+        mcpPresets: z.array(z.string()),
+      })
+      .strict(),
+    extensions: z.record(z.string(), z.unknown()).optional(),
+  })
+  .strict();
+
+export const localOverrideSchema = z
+  .object({
+    setup: z
+      .object({
+        scope: setupScopeSchema.optional(),
+      })
+      .strict()
+      .optional(),
+    targets: z
+      .object({
+        mcp: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    generated: z
+      .object({
+        prompts: promptModeSchema.optional(),
+        mcpPresets: z.array(z.string()).optional(),
+      })
+      .strict()
+      .optional(),
+    extensions: z.record(z.string(), z.unknown()).optional(),
+  })
+  .strict();
+
+export type Manifest = z.infer<typeof manifestSchema>;
+export type Framework = z.infer<typeof frameworkSchema>;
+export type SetupMode = z.infer<typeof setupModeSchema>;
+export type SetupScope = z.infer<typeof setupScopeSchema>;
+export type SetupDepth = z.infer<typeof setupDepthSchema>;
+export type PromptMode = z.infer<typeof promptModeSchema>;

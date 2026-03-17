@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.DS_Store
+
+ai-workspace.local.json
+.mcp.local.json
+.claude/settings.local.json
+.env.local
+
