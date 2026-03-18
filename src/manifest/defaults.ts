@@ -1,29 +1,53 @@
-import { manifestSchema, type Framework, type Manifest } from "./schema.js";
+import {
+  manifestSchema,
+  type Framework,
+  type Manifest,
+  type ProjectType,
+} from "./schema.js";
 
 export const DEFAULT_SCHEMA_VERSION = "1";
 
 export type RecommendedManifestOptions = {
   name: string;
   framework: Framework;
+  projectType?: ProjectType | undefined;
   targets?: Partial<Manifest["targets"]> | undefined;
   setup?: Partial<Manifest["setup"]> | undefined;
   generated?: Partial<Manifest["generated"]> | undefined;
 };
 
+function buildCodingStyle(projectType: ProjectType): string[] {
+  if (projectType === "web-app") {
+    return [
+      "Use TypeScript strict mode.",
+      "Handle loading, empty, error, and success states explicitly.",
+      "Prefer reusable page sections and shared UI patterns over one-off code.",
+    ];
+  }
+
+  return [
+    "Use TypeScript strict mode.",
+    "Handle loading, empty, error, and success states explicitly.",
+    "Prefer reusable dashboard sections over one-off page code.",
+  ];
+}
+
 export function buildRecommendedManifest(
   options: RecommendedManifestOptions,
 ): Manifest {
+  const projectType = options.projectType ?? "dashboard";
+
   return manifestSchema.parse({
     schemaVersion: DEFAULT_SCHEMA_VERSION,
     project: {
       name: options.name,
-      type: "dashboard",
+      type: projectType,
       framework: options.framework,
       language: "ts",
     },
     setup: {
       depth: "recommended",
-      mode: "base",
+      mode: "full",
       scope: "mixed",
       ...options.setup,
     },
@@ -47,14 +71,10 @@ export function buildRecommendedManifest(
     conventions: {
       accessibility: true,
       responsive: true,
-      authModel: "rbac",
+      authModel: projectType === "dashboard" ? "rbac" : "custom",
     },
     instructions: {
-      codingStyle: [
-        "Use TypeScript strict mode.",
-        "Handle loading, empty, error, and success states explicitly.",
-        "Prefer reusable dashboard sections over one-off page code.",
-      ],
+      codingStyle: buildCodingStyle(projectType),
       reviewRules: [
         "Prefer existing design-system components first.",
         "Do not introduce new UI libraries without approval.",

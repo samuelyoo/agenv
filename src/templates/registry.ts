@@ -1,7 +1,7 @@
 export type TemplateDefinition = {
   id: string;
   name: string;
-  projectType: "dashboard";
+  projectType: "dashboard" | "web-app";
   framework: "react" | "nextjs" | "vite-react";
   setupDepth: "recommended" | "semi-custom";
   defaultTargets: string[];
@@ -35,5 +35,23 @@ export const TEMPLATE_REGISTRY: TemplateDefinition[] = [
     setupDepth: "semi-custom",
     defaultTargets: ["codex", "copilot", "claude", "mcp"],
     description: "Manual-friendly React dashboard starter with broader tool selection.",
+  },
+  {
+    id: "web-app-nextjs-recommended",
+    name: "Web App Next.js Recommended",
+    projectType: "web-app",
+    framework: "nextjs",
+    setupDepth: "recommended",
+    defaultTargets: ["codex", "copilot", "claude"],
+    description: "Opinionated Next.js web app setup with shared AI workspace defaults.",
+  },
+  {
+    id: "web-app-react-semi-custom",
+    name: "Web App React Semi-custom",
+    projectType: "web-app",
+    framework: "react",
+    setupDepth: "semi-custom",
+    defaultTargets: ["codex", "copilot", "claude", "mcp"],
+    description: "Manual-friendly React web app starter with broader tool selection.",
   },
 ];

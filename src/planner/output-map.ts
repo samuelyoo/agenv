@@ -40,7 +40,7 @@ const CLAUDE_AGENTS = [
   "qa-reviewer",
 ];
 
-const PROMPT_PACKS = [
+export const PROMPT_PACKS = [
   "build-page-shell",
   "build-data-table",
   "build-filter-panel",
@@ -72,7 +72,7 @@ export const OUTPUT_MAP: OutputMapEntry[] = [
     path: "docs/ai-architecture.md",
     layer: "base",
     scope: "shared",
-    purpose: "Shared dashboard conventions summary",
+    purpose: "Shared project conventions summary",
     generated: true,
     trustSensitive: false,
     applies: (manifest) =>
@@ -86,8 +86,7 @@ export const OUTPUT_MAP: OutputMapEntry[] = [
     purpose: "Bootstrap prompt",
     generated: true,
     trustSensitive: false,
-    applies: (manifest) =>
-      manifest.generated.prompts === "master" || manifest.generated.prompts === "pack",
+    applies: (manifest) => manifest.generated.prompts !== "none",
   },
   {
     target: "shared",

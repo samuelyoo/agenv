@@ -1,18 +1,29 @@
 {
   "name": "agenv",
   "version": "0.1.0",
-  "description": "Bootstrap a portable, reviewable AI workspace for dashboard repositories.",
+  "description": "Bootstrap a portable, reviewable AI workspace for web development repositories.",
   "keywords": [
     "ai",
     "cli",
     "developer-tools",
+    "web-development",
     "mcp",
     "codex",
     "copilot",
     "claude",
     "workspace",
-    "dashboard"
+    "dashboard",
+    "frontend",
+    "internal-tools"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samuelyoo/agenv.git"
+  },
+  "homepage": "https://github.com/samuelyoo/agenv",
+  "bugs": {
+    "url": "https://github.com/samuelyoo/agenv/issues"
+  },
   "license": "MIT",
   "type": "module",
   "bin": {

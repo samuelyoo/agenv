@@ -14,7 +14,9 @@ It is more explanation-friendly than the PRD, TRD, and contract docs.
 
 `agenv` is a CLI package that helps a team define one shared AI workspace intent and turn that into tool-specific outputs.
 
-The package is currently optimized for dashboard development repositories and focuses on these target outputs:
+The package currently supports both `dashboard` and `web-app` project types, though it is still more mature on the dashboard side today.
+
+It focuses on these target outputs:
 
 - OpenAI Codex via `AGENTS.md`
 - GitHub Copilot repo instructions

@@ -13,7 +13,7 @@ export function registerTemplatesListCommand(program: Command): void {
 
   templatesCommand
     .command("list")
-    .description("List built-in dashboard starter templates.")
+    .description("List built-in starter templates.")
     .option("--json", "emit machine-readable output")
     .action((options: TemplatesListOptions) => {
       const text = formatTextBlock(

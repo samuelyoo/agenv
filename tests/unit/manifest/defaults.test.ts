@@ -23,7 +23,7 @@ describe("buildRecommendedManifest", () => {
     });
     expect(manifest.setup).toEqual({
       depth: "recommended",
-      mode: "base",
+      mode: "full",
       scope: "mixed",
     });
     expect(manifest.generated).toEqual({
@@ -60,5 +60,19 @@ describe("buildRecommendedManifest", () => {
       agents: true,
       mcpPresets: ["filesystem"],
     });
+  });
+
+  it("supports a web-app project type with generic defaults", () => {
+    const manifest = buildRecommendedManifest({
+      name: "marketing-site",
+      framework: "react",
+      projectType: "web-app",
+    });
+
+    expect(manifest.project.type).toBe("web-app");
+    expect(manifest.conventions.authModel).toBe("custom");
+    expect(manifest.instructions.codingStyle).toContain(
+      "Prefer reusable page sections and shared UI patterns over one-off code.",
+    );
   });
 });

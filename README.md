@@ -1,16 +1,17 @@
 # agenv
 
-`agenv` is an npm package for bootstrapping a portable, reviewable AI workspace for dashboard development repositories.
+`agenv` is an npm package for bootstrapping a portable, reviewable AI workspace for web development repositories.
 
 It helps a team define one canonical AI workspace manifest and turn that into tool-specific outputs for supported coding assistants and MCP-compatible tooling.
 
 ## What It Does
 
-- inspects a dashboard-oriented repo
+- inspects a web development repo and infers useful setup hints
 - creates or loads `ai-workspace.json`
 - plans generated files for supported targets
 - generates shared docs and tool-specific files
 - supports Codex, Copilot, Claude, and MCP in the current MVP direction
+- supports both `dashboard` and `web-app` as project types
 
 ## Current Status
 
@@ -29,10 +30,34 @@ Still early:
 - interactive `init` is still shallow
 - generated file content is functional but not fully polished
 - `doctor` has structure but is not feature-complete yet
+- the current MVP is still most optimized for dashboard and internal-tool workflows
 
 ## Vision
 
-Set up a portable, reviewable AI coding environment for dashboard development in one command.
+Set up a portable, reviewable AI coding environment for web development in one command.
+
+## Install and Use
+
+```bash
+npx agenv --help
+```
+
+```bash
+npm install -g agenv
+agenv --help
+```
+
+Examples:
+
+```bash
+agenv init --yes
+agenv generate
+```
+
+```bash
+agenv diff
+agenv templates-list
+```
 
 ## Start Here
 

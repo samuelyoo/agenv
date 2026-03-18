@@ -4,6 +4,7 @@ import { buildRecommendedManifest } from "../../manifest/defaults.js";
 import { saveManifest } from "../../manifest/save.js";
 import type {
   Framework,
+  ProjectType,
   PromptMode,
   SetupDepth,
   SetupMode,
@@ -25,6 +26,8 @@ type InitOptions = {
   configScope?: SetupScope;
   prompts?: PromptMode;
 };
+
+const SUPPORTED_PROJECT_TYPES: ProjectType[] = ["dashboard", "web-app"];
 
 function buildTargetFlags(targets?: string) {
   const selectedTargets = parseCommaList(targets);
@@ -63,15 +66,15 @@ export function registerInitCommand(program: Command): void {
     .option("--dry-run", "preview without writing files")
     .option("--json", "emit machine-readable output")
     .option("--targets <list>", "comma-separated targets such as codex,claude,copilot,mcp")
-    .option("--project-type <type>", "project type; MVP supports dashboard only", "dashboard")
+    .option("--project-type <type>", "project type: dashboard or web-app", "dashboard")
     .option("--framework <value>", "override detected framework")
     .option("--setup-depth <value>", "recommended, semi-custom, or advanced")
     .option("--setup-mode <value>", "base, skills, agents, or full")
     .option("--config-scope <value>", "shared, local, or mixed")
     .option("--prompts <value>", "none, starter, master, or pack")
     .action(async (options: InitOptions) => {
-      if (options.projectType !== "dashboard") {
-        throw new Error("MVP init currently supports only project type 'dashboard'.");
+      if (!SUPPORTED_PROJECT_TYPES.includes(options.projectType as ProjectType)) {
+        throw new Error("Supported project types are 'dashboard' and 'web-app'.");
       }
 
       validateTargets(options.targets);
@@ -81,6 +84,7 @@ export function registerInitCommand(program: Command): void {
       const manifest = buildRecommendedManifest({
         name: inspection.projectName,
         framework: options.framework ?? inspection.framework ?? "react",
+        projectType: options.projectType as ProjectType,
         ...compactObject({
           targets: buildTargetFlags(options.targets),
           setup: compactObject({

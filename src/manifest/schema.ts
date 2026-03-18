@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const frameworkSchema = z.enum(["react", "nextjs", "vite-react"]);
+export const projectTypeSchema = z.enum(["dashboard", "web-app"]);
 export const setupDepthSchema = z.enum(["recommended", "semi-custom", "advanced"]);
 export const setupModeSchema = z.enum(["base", "skills", "agents", "full"]);
 export const setupScopeSchema = z.enum(["shared", "local", "mixed"]);
@@ -12,7 +13,7 @@ export const manifestSchema = z
     project: z
       .object({
         name: z.string().min(1),
-        type: z.literal("dashboard"),
+        type: projectTypeSchema,
         framework: frameworkSchema,
         language: z.literal("ts"),
       })
@@ -98,6 +99,7 @@ export const localOverrideSchema = z
 
 export type Manifest = z.infer<typeof manifestSchema>;
 export type Framework = z.infer<typeof frameworkSchema>;
+export type ProjectType = z.infer<typeof projectTypeSchema>;
 export type SetupMode = z.infer<typeof setupModeSchema>;
 export type SetupScope = z.infer<typeof setupScopeSchema>;
 export type SetupDepth = z.infer<typeof setupDepthSchema>;

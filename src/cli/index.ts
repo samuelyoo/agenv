@@ -13,7 +13,7 @@ export function createCli(): Command {
   program
     .name("agenv")
     .description(
-      "Bootstrap a portable, reviewable AI workspace for dashboard repositories.",
+      "Bootstrap a portable, reviewable AI workspace for web development repositories.",
     )
     .version("0.1.0");
 

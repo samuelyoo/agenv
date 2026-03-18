@@ -3,7 +3,7 @@ import { buildRecommendedManifest } from "../../../src/manifest/defaults.js";
 import { buildGenerationPlan } from "../../../src/planner/build-plan.js";
 
 describe("buildGenerationPlan", () => {
-  it("limits base mode to base-layer files", () => {
+  it("includes prompt files by default when recommended prompts are enabled", () => {
     const manifest = buildRecommendedManifest({
       name: "ops-dashboard",
       framework: "nextjs",
@@ -14,8 +14,26 @@ describe("buildGenerationPlan", () => {
 
     const plan = buildGenerationPlan(manifest);
 
-    expect(plan.files.every((file) => file.layer === "base")).toBe(true);
     expect(plan.files.some((file) => file.path === "AGENTS.md")).toBe(true);
+    expect(plan.files.some((file) => file.path === "docs/ai-prompts/bootstrap.md")).toBe(true);
+    expect(plan.files.some((file) => file.path === ".claude/skills/build-data-table.md")).toBe(false);
+  });
+
+  it("still lets explicit base mode suppress prompt output", () => {
+    const manifest = buildRecommendedManifest({
+      name: "ops-dashboard",
+      framework: "nextjs",
+      setup: {
+        mode: "base",
+      },
+      generated: {
+        prompts: "pack",
+      },
+    });
+
+    const plan = buildGenerationPlan(manifest);
+
+    expect(plan.files.every((file) => file.layer === "base")).toBe(true);
     expect(plan.files.some((file) => file.path === "docs/ai-prompts/bootstrap.md")).toBe(false);
   });
 
