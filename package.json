@@ -2,6 +2,18 @@
   "name": "agenv",
   "version": "0.1.0",
   "description": "Bootstrap a portable, reviewable AI workspace for dashboard repositories.",
+  "keywords": [
+    "ai",
+    "cli",
+    "developer-tools",
+    "mcp",
+    "codex",
+    "copilot",
+    "claude",
+    "workspace",
+    "dashboard"
+  ],
+  "license": "MIT",
   "type": "module",
   "bin": {
     "agenv": "dist/cli/index.js"
