@@ -119,6 +119,51 @@ const PROMPT_TEMPLATE_DEFINITIONS: Record<string, PromptTemplateDefinition> = {
       "Verification that the form behaves correctly across happy path, invalid input, and submission failure cases.",
     ],
   },
+  "handle-loading-empty-error-states": {
+    title: "Handle Loading, Empty, and Error States",
+    goal: "Design and implement resilient loading, empty, and error states so the experience stays understandable under real-world data conditions.",
+    useWhen: "Use this when a feature is functionally complete on the happy path but still feels fragile, confusing, or incomplete around asynchronous states and failures.",
+    focusAreas: [
+      "Audit the user journey for loading, empty, partial, stale, retry, and failure states instead of only the success state.",
+      "Make fallback UI informative enough that users understand what happened and what they can do next.",
+      "Keep state handling consistent across page-level and component-level boundaries so the UI does not contradict itself.",
+    ],
+    deliverables: [
+      "The UI and state-handling changes needed to cover loading, empty, and error scenarios properly.",
+      "A short summary of which edge states were added or improved and why.",
+      "Verification that the feature remains understandable across representative failure and no-data conditions.",
+    ],
+  },
+  "enforce-accessibility-and-responsive-layout": {
+    title: "Enforce Accessibility and Responsive Layout",
+    goal: "Refine the implementation so accessibility, keyboard support, semantics, and responsive behavior are built into the feature rather than added as an afterthought.",
+    useWhen: "Use this when a UI surface is implemented but still needs a structured pass for accessibility quality, semantic clarity, and device responsiveness.",
+    focusAreas: [
+      "Review headings, landmarks, labels, focus order, and keyboard interaction before treating the UI as complete.",
+      "Check how layout, density, spacing, and overflow behave across narrow, medium, and wide screens.",
+      "Prefer adjustments that improve both usability and maintainability instead of layering one-off fixes on top.",
+    ],
+    deliverables: [
+      "The accessibility and responsive-layout improvements required for the feature.",
+      "A short note describing the key improvements and any remaining accessibility risks.",
+      "Verification steps covering keyboard behavior, semantics, and responsive layout expectations.",
+    ],
+  },
+  "write-dashboard-tests": {
+    title: "Write Feature Tests",
+    goal: "Add focused automated tests that prove the implementation works across the most important user flows and failure paths.",
+    useWhen: "Use this when the implementation exists but confidence is still too dependent on manual checking or the happy path only.",
+    focusAreas: [
+      "Choose the test level that best matches the behavior under risk instead of defaulting blindly to unit or integration tests.",
+      "Cover realistic user-visible outcomes, including loading, empty, error, validation, or permission-sensitive behavior where relevant.",
+      "Keep the tests readable enough that future contributors can understand what behavior is protected.",
+    ],
+    deliverables: [
+      "Automated tests that protect the highest-risk behavior in the feature.",
+      "A brief summary of what the new tests cover and what they intentionally do not cover yet.",
+      "Notes on any remaining blind spots that still need manual verification or future coverage.",
+    ],
+  },
   "ui-builder": {
     title: "UI Builder",
     goal: "Design and implement cohesive UI structure that feels intentional, consistent, and maintainable.",
@@ -327,7 +372,7 @@ function renderBootstrapPrompt(manifest: Manifest): string {
         "A final summary covering what changed, how it was verified, and any remaining risk.",
       ];
 
-  return `# Bootstrap Prompt\n\nUse this prompt when starting a new task in the repository.\n\n## Project Focus\n\n${describeProjectFocus(manifest)}\n\n## Ready-To-Use Prompt\n\n${renderPromptBlock(manifest, goal, focusAreas, deliverables)}`;
+  return `# Bootstrap Prompt\n\nUse this prompt when starting a new task in the repository.\n\nThis prompt is intentionally broad and reusable. It is the right default when you want one strong project-aware prompt without committing to a specialized workflow yet.\n\n## Project Focus\n\n${describeProjectFocus(manifest)}\n\n## Ready-To-Use Prompt\n\n${renderPromptBlock(manifest, goal, focusAreas, deliverables)}`;
 }
 
 function renderPromptIndex(manifest: Manifest): string {
@@ -342,9 +387,9 @@ function renderPromptIndex(manifest: Manifest): string {
       ? "Starter mode gives you one lightweight prompt to kick off a task."
       : manifest.generated.prompts === "master"
         ? "Master mode gives you a more structured bootstrap prompt for planning, implementation, and verification."
-        : "Pack mode adds specialized prompts for common implementation roles and task shapes.";
+        : "Pack mode adds detailed best-practice prompts for common implementation roles, edge-state handling, accessibility, testing, and review flows.";
 
-  return `# AI Prompts\n\nPrompt generation mode: ${manifest.generated.prompts}\n\n${modeSummary}\n\nUse these prompts as reusable starting points for common ${describeProjectType(manifest)} implementation tasks.\n\n## Generated Prompt Files\n\n${generatedPrompts.map((promptFile) => `- \`${promptFile}\``).join("\n")}\n\n## How To Use Them\n\n- Start with \`bootstrap.md\` when you want one prompt that captures the project context and quality bar.\n- Reach for a specialized prompt when the work is clearly about a table, chart, form, data integration, or implementation review.\n- Edit the task wording in the prompt before pasting it into another tool so it matches the exact feature you are building.\n`;
+  return `# AI Prompts\n\nPrompt generation mode: ${manifest.generated.prompts}\n\n${modeSummary}\n\nUse these prompts as reusable starting points for common ${describeProjectType(manifest)} implementation tasks.\n\n## Prompt Strategy\n\n- \`starter\` and \`master\` are intentionally more generic so they stay broadly reusable.\n- \`pack\` is the more complete setup: it adds richer best-practice prompts for specialized work.\n- Use specialized prompts when you want stronger guidance around implementation quality, state handling, accessibility, testing, or review depth.\n\n## Generated Prompt Files\n\n${generatedPrompts.map((promptFile) => `- \`${promptFile}\``).join("\n")}\n\n## How To Use Them\n\n- Start with \`bootstrap.md\` when you want one prompt that captures the project context and quality bar.\n- Reach for a specialized prompt when the work is clearly about a table, chart, form, data integration, state handling, accessibility, testing, or implementation review.\n- Edit the task wording in the prompt before pasting it into another tool so it matches the exact feature you are building.\n`;
 }
 
 function renderPromptTemplate(file: PlannedFile, manifest: Manifest): string {

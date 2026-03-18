@@ -99,6 +99,9 @@ Prompt outputs are shared by default because they are documentation artifacts, n
 | `docs/ai-prompts/build-chart-section.md` | `prompts` | `shared` | `generated.prompts = pack` |
 | `docs/ai-prompts/connect-api-resource.md` | `prompts` | `shared` | `generated.prompts = pack` |
 | `docs/ai-prompts/build-form-flow.md` | `prompts` | `shared` | `generated.prompts = pack` |
+| `docs/ai-prompts/handle-loading-empty-error-states.md` | `prompts` | `shared` | `generated.prompts = pack` |
+| `docs/ai-prompts/enforce-accessibility-and-responsive-layout.md` | `prompts` | `shared` | `generated.prompts = pack` |
+| `docs/ai-prompts/write-dashboard-tests.md` | `prompts` | `shared` | `generated.prompts = pack` |
 | `docs/ai-prompts/ui-builder.md` | `prompts` | `shared` | `generated.prompts = pack` and `generated.agents = true` |
 | `docs/ai-prompts/data-integrator.md` | `prompts` | `shared` | same as above |
 | `docs/ai-prompts/table-specialist.md` | `prompts` | `shared` | same as above |
@@ -128,6 +131,7 @@ Prompt outputs are shared by default because they are documentation artifacts, n
 ### `setup.mode = full`
 
 - Generate all selected layers subject to target support and prompt settings.
+- In practice, `generated.prompts = pack` is the more complete prompt setup because it adds richer best-practice prompt files beyond the generic bootstrap prompt.
 
 ## 8. Scope-to-output rules
 

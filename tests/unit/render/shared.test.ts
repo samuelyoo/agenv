@@ -48,6 +48,27 @@ describe("renderSharedFile prompt rendering", () => {
 
     expect(rendered.content).toContain("build-page-shell.md");
     expect(rendered.content).toContain("qa-reviewer.md");
-    expect(rendered.content).toContain("Pack mode adds specialized prompts");
+    expect(rendered.content).toContain("Pack mode adds detailed best-practice prompts");
+    expect(rendered.content).toContain("handle-loading-empty-error-states.md");
+    expect(rendered.content).toContain("enforce-accessibility-and-responsive-layout.md");
+  });
+
+  it("renders a detailed best-practice prompt for state handling", () => {
+    const manifest = buildRecommendedManifest({
+      name: "ops-dashboard",
+      framework: "react",
+      generated: {
+        prompts: "pack",
+      },
+    });
+
+    const rendered = renderSharedFile(
+      makePromptFile("docs/ai-prompts/handle-loading-empty-error-states.md"),
+      manifest,
+    );
+
+    expect(rendered.content).toContain("# Handle Loading, Empty, and Error States");
+    expect(rendered.content).toContain("Audit the user journey for loading, empty, partial, stale, retry, and failure states");
+    expect(rendered.content).toContain("Expected deliverables:");
   });
 });
