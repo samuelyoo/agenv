@@ -39,11 +39,11 @@ Set up a portable, reviewable AI coding environment for web development in one c
 ## Install and Use
 
 ```bash
-npx agenv --help
+npx agenv-cli --help
 ```
 
 ```bash
-npm install -g agenv
+npm install -g agenv-cli
 agenv --help
 ```
 

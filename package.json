@@ -1,5 +1,5 @@
 {
-  "name": "agenv",
+  "name": "agenv-cli",
   "version": "0.1.0",
   "description": "Bootstrap a portable, reviewable AI workspace for web development repositories.",
   "keywords": [
