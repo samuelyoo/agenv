@@ -15,7 +15,7 @@ export function createCli(): Command {
     .description(
       "Bootstrap a portable, reviewable AI workspace for web development repositories.",
     )
-    .version("0.1.0");
+    .version("1.0.0");
 
   registerInitCommand(program);
   registerGenerateCommand(program);

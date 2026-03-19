@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-export const frameworkSchema = z.enum(["react", "nextjs", "vite-react"]);
-export const projectTypeSchema = z.enum(["dashboard", "web-app"]);
+export const frameworkSchema = z.enum(["react", "nextjs", "vite-react", "express", "fastify", "hono"]);
+export const projectTypeSchema = z.enum(["dashboard", "web-app", "api-service"]);
 export const setupDepthSchema = z.enum(["recommended", "semi-custom", "advanced"]);
 export const setupModeSchema = z.enum(["base", "skills", "agents", "full"]);
 export const setupScopeSchema = z.enum(["shared", "local", "mixed"]);
@@ -44,7 +44,18 @@ export const manifestSchema = z
         testing: z.array(z.enum(["vitest", "rtl", "playwright"])).min(1),
         state: z.enum(["local-first", "zustand"]),
       })
-      .strict(),
+      .strict()
+      .optional(),
+    apiService: z
+      .object({
+        apiStyle: z.enum(["rest", "graphql", "trpc"]),
+        validation: z.enum(["zod", "typebox", "custom"]),
+        orm: z.enum(["prisma", "drizzle", "none"]),
+        testing: z.array(z.enum(["vitest", "supertest", "playwright"])).min(1),
+        auth: z.enum(["jwt", "session", "none", "custom"]),
+      })
+      .strict()
+      .optional(),
     conventions: z
       .object({
         routing: z.string().optional(),

@@ -257,12 +257,18 @@ const PROMPT_TEMPLATE_DEFINITIONS: Record<string, PromptTemplateDefinition> = {
 };
 
 function describeProjectType(manifest: Manifest): string {
-  return manifest.project.type === "web-app" ? "web app" : "dashboard";
+  if (manifest.project.type === "web-app") return "web app";
+  if (manifest.project.type === "api-service") return "API service";
+  return "dashboard";
 }
 
 function describeProjectFocus(manifest: Manifest): string {
   if (manifest.project.type === "web-app") {
     return "Favor cohesive user journeys, responsive layouts, and reusable UI patterns that scale beyond a single page.";
+  }
+
+  if (manifest.project.type === "api-service") {
+    return "Favor clean request/response contracts, input validation at the boundary, consistent error shapes, and thin controllers delegating to well-tested service functions.";
   }
 
   return "Favor operational clarity, dense-but-readable interfaces, and explicit handling for data-heavy states and permissions.";
@@ -290,7 +296,7 @@ function buildProjectContext(manifest: Manifest): string[] {
     context.push(`Auth model: ${manifest.conventions.authModel}`);
   }
 
-  if (manifest.project.type === "dashboard") {
+  if (manifest.project.type === "dashboard" && manifest.dashboard) {
     context.push(
       `Styling: ${manifest.dashboard.styling}`,
       `Components: ${manifest.dashboard.components}`,
@@ -300,6 +306,16 @@ function buildProjectContext(manifest: Manifest): string[] {
       `Forms: ${manifest.dashboard.forms}`,
       `State: ${manifest.dashboard.state}`,
       `Testing: ${manifest.dashboard.testing.join(", ")}`,
+    );
+  }
+
+  if (manifest.project.type === "api-service" && manifest.apiService) {
+    context.push(
+      `API style: ${manifest.apiService.apiStyle}`,
+      `Validation: ${manifest.apiService.validation}`,
+      `ORM: ${manifest.apiService.orm}`,
+      `Auth: ${manifest.apiService.auth}`,
+      `Testing: ${manifest.apiService.testing.join(", ")}`,
     );
   }
 

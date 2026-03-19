@@ -75,4 +75,25 @@ describe("buildRecommendedManifest", () => {
       "Prefer reusable page sections and shared UI patterns over one-off code.",
     );
   });
+
+  it("supports an api-service project type with backend defaults", () => {
+    const manifest = buildRecommendedManifest({
+      name: "payments-api",
+      framework: "express",
+      projectType: "api-service",
+    });
+
+    expect(manifest.project.type).toBe("api-service");
+    expect(manifest.project.framework).toBe("express");
+    expect(manifest.dashboard).toBeUndefined();
+    expect(manifest.apiService).toBeDefined();
+    expect(manifest.apiService?.apiStyle).toBe("rest");
+    expect(manifest.apiService?.validation).toBe("zod");
+    expect(manifest.apiService?.orm).toBe("prisma");
+    expect(manifest.conventions.accessibility).toBe(false);
+    expect(manifest.conventions.responsive).toBe(false);
+    expect(manifest.instructions.codingStyle).toContain(
+      "Validate all inputs at the boundary with Zod or equivalent.",
+    );
+  });
 });

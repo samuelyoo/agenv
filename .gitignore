@@ -7,3 +7,4 @@ ai-workspace.local.json
 .claude/settings.local.json
 .env.local
 
+*.tgz
