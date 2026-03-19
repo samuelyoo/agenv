@@ -1,88 +1,228 @@
 # agenv
 
-`agenv` is an npm package for bootstrapping a portable, reviewable AI workspace for web development repositories.
+`agenv` is a CLI for bootstrapping a portable, reviewable AI workspace for development repositories.
 
-It helps a team define one canonical AI workspace manifest and turn that into tool-specific outputs for supported coding assistants and MCP-compatible tooling.
+It helps teams define one shared `ai-workspace.json` manifest and generate tool-specific outputs for coding assistants and MCP-compatible tooling.
 
-## What It Does
+## Why `agenv`?
 
-- inspects a web development repo and infers useful setup hints
-- creates or loads `ai-workspace.json`
-- plans generated files for supported targets
-- generates shared docs and tool-specific files
-- supports Codex, Copilot, Claude, and MCP in the current MVP direction
-- supports both `dashboard` and `web-app` as project types
+AI tooling often gets configured ad hoc: scattered prompts, inconsistent instructions, and machine-specific setup that is hard to review.
 
-## Current Status
+`agenv` gives you a more structured approach:
 
-This repo is no longer docs-only. It now includes:
+- inspect an existing repository
+- create a canonical AI workspace manifest
+- generate consistent tool-specific files
+- keep shared and local AI configuration easier to review
 
-- a buildable TypeScript package scaffold
-- a CLI entrypoint and command shells
-- manifest schema, defaults, normalization, load, and save
-- repo inspection and stack hints
-- generation planning and warnings
-- a first real `generate` and `diff` path
-- unit and integration tests
+## What it supports
 
-Still early:
+### Project types
 
-- interactive `init` is still shallow
-- generated file content is functional but not fully polished
-- `doctor` has structure but is not feature-complete yet
-- the current MVP is still most optimized for dashboard and internal-tool workflows
+`agenv` currently supports:
 
-## Vision
+- `dashboard`
+- `web-app`
+- `api-service`
 
-Set up a portable, reviewable AI coding environment for web development in one command.
+### Frameworks
 
-## Install and Use
+Supported frameworks currently include:
+
+- `react`
+- `nextjs`
+- `vite-react`
+- `express`
+- `fastify`
+- `hono`
+
+### Targets
+
+`agenv` can generate files for:
+
+- OpenAI Codex
+- GitHub Copilot
+- Claude
+- MCP-compatible tooling
+
+## Core workflow
+
+The typical flow is:
+
+1. inspect the repo
+2. create or load `ai-workspace.json`
+3. build a deterministic generation plan
+4. generate target-specific files from the shared manifest
+
+## Installation
+
+### Run with `npx`
 
 ```bash
 npx agenv-cli --help
 ```
+
+### Install globally
 
 ```bash
 npm install -g agenv-cli
 agenv --help
 ```
 
-Examples:
+## Quick start
+
+### Interactive setup
+
+`init` now runs interactively by default.
+
+```bash
+agenv init
+```
+
+### Non-interactive setup with defaults
+
+Use `--yes` to skip prompts and accept recommended defaults.
 
 ```bash
 agenv init --yes
+```
+
+### Generate files
+
+```bash
 agenv generate
 ```
 
+### Preview changes without writing
+
 ```bash
 agenv diff
-agenv templates-list
 ```
 
-## Start Here
+### List available templates
 
-If you are new to the repo, read these in order:
+```bash
+agenv templates list
+```
 
-- contributor guide: [doc/getting-started.md](/Users/syoo/Documents/code/agenv-package/doc/getting-started.md)
-- product requirements: [doc/prd.md](/Users/syoo/Documents/code/agenv-package/doc/prd.md)
-- technical requirements: [doc/trd.md](/Users/syoo/Documents/code/agenv-package/doc/trd.md)
-- CLI contract: [doc/cli-spec.md](/Users/syoo/Documents/code/agenv-package/doc/cli-spec.md)
-- manifest contract: [doc/manifest-spec.md](/Users/syoo/Documents/code/agenv-package/doc/manifest-spec.md)
-- output map: [doc/output-map.md](/Users/syoo/Documents/code/agenv-package/doc/output-map.md)
-- adapter contract: [doc/adapter-contract.md](/Users/syoo/Documents/code/agenv-package/doc/adapter-contract.md)
-- implementation plan: [doc/implementation-plan.md](/Users/syoo/Documents/code/agenv-package/doc/implementation-plan.md)
+## CLI commands
 
-## Development Commands
+### `agenv init`
+
+Creates a canonical `ai-workspace.json` from repository inspection and defaults.
+
+Common options:
+
+- `--yes` — accept recommended defaults and skip interactive prompts
+- `--dry-run` — preview without writing files
+- `--json` — emit machine-readable output
+- `--targets <list>` — comma-separated targets such as `codex,claude,copilot,mcp`
+- `--project-type <type>` — `dashboard`, `web-app`, or `api-service`
+- `--framework <value>` — override detected framework
+- `--setup-depth <value>` — `recommended`, `semi-custom`, or `advanced`
+- `--setup-mode <value>` — `base`, `skills`, `agents`, or `full`
+- `--config-scope <value>` — `shared`, `local`, or `mixed`
+- `--prompts <value>` — `none`, `starter`, `master`, or `pack`
+
+### `agenv generate`
+
+Generates planned files from the manifest.
+
+### `agenv diff`
+
+Shows what `generate` would create or update without writing files.
+
+### `agenv doctor`
+
+Runs diagnostics on the current AI workspace setup.
+
+### `agenv templates list`
+
+Lists available templates in the registry.
+
+## Example usage
+
+### Dashboard or web app
+
+```bash
+agenv init --project-type web-app --targets codex,copilot,claude
+agenv generate
+```
+
+### API service
+
+```bash
+agenv init --project-type api-service --framework fastify --targets codex,copilot,mcp
+agenv generate
+```
+
+### Preview before writing
+
+```bash
+agenv diff --json
+```
+
+## Manifest
+
+`agenv` uses a shared manifest file:
+
+- `ai-workspace.json` — shared, committed configuration
+- `ai-workspace.local.json` — local override configuration
+
+The manifest is intended to be:
+
+- human-editable
+- diff-friendly
+- stable across repeated runs
+- usable as the source of truth for generated outputs
+
+## Generated outputs
+
+Depending on selected targets and setup, `agenv` can generate files such as:
+
+- `ai-workspace.json`
+- `ai-workspace.local.json`
+- `AGENTS.md`
+- `.github/copilot-instructions.md`
+- `.claude/README.md`
+- `.claude/skills/*`
+- `docs/ai-architecture.md`
+- `docs/ai-prompts/*`
+- `.env.example`
+
+## Current status
+
+This is an early but working CLI.
+
+What already works:
+
+- TypeScript package scaffold
+- CLI entrypoint and commands
+- manifest schema, normalization, load, and save
+- repo inspection and stack hints
+- generation planning
+- rendered file generation
+- diff flow
+- tests
+
+Areas still improving:
+
+- richer interactive setup flows
+- more polished generated content across all targets
+- broader `doctor` coverage
+- continued expansion of prompt packs and templates
+
+## Development
 
 ```bash
 npm install
+npm run build
 npm test
 npm run typecheck
-npm run build
 node dist/cli/index.js --help
 ```
 
-## Package Shape
+## Project structure
 
 ```text
 src/
@@ -100,11 +240,19 @@ doc/
 tests/
 ```
 
-## Best Next Step
+## Docs
 
-The strongest near-term path is to keep improving the first usable slice:
+For deeper details, see:
 
-1. make generated files richer and less placeholder-like
-2. deepen `init --yes` and preview behavior
-3. expand `doctor`
-4. add more integration coverage around real CLI behavior
+- `doc/getting-started.md`
+- `doc/prd.md`
+- `doc/trd.md`
+- `doc/cli-spec.md`
+- `doc/manifest-spec.md`
+- `doc/output-map.md`
+- `doc/adapter-contract.md`
+- `doc/implementation-plan.md`
+
+## License
+
+MIT
