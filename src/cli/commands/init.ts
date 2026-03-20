@@ -1,4 +1,5 @@
 import { Command } from "commander";
+import { InvalidOptionError } from "../../errors.js";
 import { inspectRepo } from "../../detect/repo-inspector.js";
 import { buildRecommendedManifest } from "../../manifest/defaults.js";
 import { saveManifest } from "../../manifest/save.js";
@@ -9,6 +10,13 @@ import type {
   SetupDepth,
   SetupMode,
   SetupScope,
+} from "../../manifest/schema.js";
+import {
+  frameworkSchema,
+  setupDepthSchema,
+  setupModeSchema,
+  setupScopeSchema,
+  promptModeSchema,
 } from "../../manifest/schema.js";
 import { buildGenerationPlan } from "../../planner/build-plan.js";
 import { ADAPTER_TARGETS } from "../../planner/output-map.js";
@@ -54,8 +62,18 @@ function compactObject<T extends Record<string, unknown>>(value: T): Partial<T> 
 function validateTargets(targets?: string): void {
   for (const target of parseCommaList(targets)) {
     if (!ADAPTER_TARGETS.includes(target as (typeof ADAPTER_TARGETS)[number])) {
-      throw new Error(`Unsupported target: ${target}`);
+      throw new InvalidOptionError("--targets", target, ADAPTER_TARGETS);
     }
+  }
+}
+
+function validateOptionEnum(
+  flag: string,
+  value: string | undefined,
+  schema: { options: readonly string[] },
+): void {
+  if (value !== undefined && !schema.options.includes(value)) {
+    throw new InvalidOptionError(flag, value, schema.options);
   }
 }
 
@@ -75,6 +93,17 @@ export function registerInitCommand(program: Command): void {
     .option("--prompts <value>", "none, starter, master, or pack")
     .action(async (options: InitOptions) => {
       const cwd = process.cwd();
+
+      // Validate all CLI options early, before any I/O
+      validateTargets(options.targets);
+      if (options.framework !== undefined) {
+        validateOptionEnum("--framework", options.framework, frameworkSchema);
+      }
+      validateOptionEnum("--setup-depth", options.setupDepth, setupDepthSchema);
+      validateOptionEnum("--setup-mode", options.setupMode, setupModeSchema);
+      validateOptionEnum("--config-scope", options.configScope, setupScopeSchema);
+      validateOptionEnum("--prompts", options.prompts, promptModeSchema);
+
       const inspection = await inspectRepo(cwd);
 
       let manifest;
@@ -82,10 +111,8 @@ export function registerInitCommand(program: Command): void {
       if (options.yes) {
         // Non-interactive: use CLI flags + defaults
         if (!SUPPORTED_PROJECT_TYPES.includes(options.projectType as ProjectType)) {
-          throw new Error("Supported project types are 'dashboard', 'web-app', and 'api-service'.");
+          throw new InvalidOptionError("--project-type", options.projectType ?? "", SUPPORTED_PROJECT_TYPES);
         }
-
-        validateTargets(options.targets);
 
         manifest = buildRecommendedManifest({
           name: inspection.projectName,
