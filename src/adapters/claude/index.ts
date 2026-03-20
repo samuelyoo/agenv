@@ -155,12 +155,14 @@ const AGENT_DESCRIPTIONS: Record<string, { role: string; focus: string }> = {
   },
 };
 
+const KNOWN_ACRONYMS: Record<string, string> = { qa: "QA", api: "API", ui: "UI" };
+function titleCase(token: string): string {
+  return KNOWN_ACRONYMS[token.toLowerCase()] ?? `${token.charAt(0).toUpperCase()}${token.slice(1)}`;
+}
+
 function renderSkill(skillName: string, manifest: Manifest): string {
   const desc = SKILL_DESCRIPTIONS[skillName];
-  const title = skillName
-    .split("-")
-    .map((w) => `${w.charAt(0).toUpperCase()}${w.slice(1)}`)
-    .join(" ");
+  const title = skillName.split("-").map(titleCase).join(" ");
 
   const sections = [
     `# ${title}`,
@@ -184,10 +186,7 @@ function renderSkill(skillName: string, manifest: Manifest): string {
 
 function renderAgent(agentName: string, manifest: Manifest): string {
   const desc = AGENT_DESCRIPTIONS[agentName];
-  const title = agentName
-    .split("-")
-    .map((w) => `${w.charAt(0).toUpperCase()}${w.slice(1)}`)
-    .join(" ");
+  const title = agentName.split("-").map(titleCase).join(" ");
 
   const sections = [
     `# ${title}`,

@@ -15,7 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Explicit skip warnings in generate output when files are skipped
 - Early CLI option validation with actionable error messages
 - `CONTRIBUTING.md` contributor guide
-- `TODO.md` prioritized review action items
 
 ### Changed
 

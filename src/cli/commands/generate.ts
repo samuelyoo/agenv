@@ -127,7 +127,13 @@ export function registerGenerateCommand(program: Command): void {
         lines.push('Use --force to overwrite these files.');
       }
 
-      lines.push(result.dryRun ? "Dry run only: files were not written." : "Files written successfully.");
+      if (result.dryRun) {
+        lines.push("Dry run only: files were not written.");
+      } else if (skippedCount > 0) {
+        lines.push("Files written with some files skipped (modified outside agenv).");
+      } else {
+        lines.push("Files written successfully.");
+      }
 
       const text = formatTextBlock(lines);
 

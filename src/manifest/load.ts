@@ -43,9 +43,17 @@ export async function loadManifest(
   // Migrate manifest to current schema version if needed
   sharedInput = migrateManifest(sharedInput);
 
-  const localInput = (await fileExists(localPath))
-    ? await readJsonFile<unknown>(localPath)
-    : undefined;
+  let localInput: unknown | undefined;
+  if (await fileExists(localPath)) {
+    try {
+      localInput = await readJsonFile<unknown>(localPath);
+    } catch (error: unknown) {
+      const reason = error instanceof Error ? error.message : "unknown error";
+      throw new ManifestValidationError([`Failed to parse ${localPath}: ${reason}`]);
+    }
+  } else {
+    localInput = undefined;
+  }
 
   return {
     manifest: normalizeManifest(sharedInput, {
