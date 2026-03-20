@@ -81,6 +81,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, development commands, and PR g
 
 ```bash
 npm install
+npm run build
 npm test
 npm run typecheck
 npm run build
