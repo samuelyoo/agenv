@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .DS_Store
+.vscode
 
 ai-workspace.local.json
 .mcp.local.json
