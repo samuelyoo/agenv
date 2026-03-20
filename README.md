@@ -10,9 +10,12 @@ Define one canonical `ai-workspace.json` manifest, then generate tool-specific c
 ## Quick Start
 
 ```bash
-# In any web project directory:
-npx -p agenv-cli agenv init --yes
-npx -p agenv-cli agenv generate
+# Install once:
+npm install -g agenv-cli
+
+# Then in any web project directory:
+agenv init --yes
+agenv generate
 ```
 
 That's it. `agenv` inspects your repo, creates `ai-workspace.json`, and generates tool-specific files for your enabled targets.
@@ -29,10 +32,6 @@ Supports `dashboard`, `web-app`, and `api-service` project types.
 ## Install
 
 ```bash
-# Run without installing
-npx -p agenv-cli agenv --help
-
-# Or install globally
 npm install -g agenv-cli
 agenv --help
 ```
