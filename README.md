@@ -1,110 +1,91 @@
 # agenv
 
-`agenv` is an npm package for bootstrapping a portable, reviewable AI workspace for web development repositories.
+[![npm version](https://img.shields.io/npm/v/agenv-cli.svg)](https://www.npmjs.com/package/agenv-cli)
+[![license](https://img.shields.io/npm/l/agenv-cli.svg)](LICENSE)
 
-It helps a team define one canonical AI workspace manifest and turn that into tool-specific outputs for supported coding assistants and MCP-compatible tooling.
+Bootstrap a portable, reviewable AI workspace for web development repositories — in one command.
+
+Define one canonical `ai-workspace.json` manifest, then generate tool-specific configuration files for Codex, Copilot, Claude, and MCP-compatible tooling.
+
+## Quick Start
+
+```bash
+# In any web project directory:
+npx agenv-cli init --yes
+npx agenv-cli generate
+```
+
+That's it. `agenv` inspects your repo, creates `ai-workspace.json`, and generates tool-specific files for your enabled targets.
 
 ## What It Does
 
-- inspects a web development repo and infers useful setup hints
-- creates or loads `ai-workspace.json`
-- plans generated files for supported targets
-- generates shared docs and tool-specific files
-- supports Codex, Copilot, Claude, and MCP in the current MVP direction
-- supports both `dashboard` and `web-app` as project types
+1. **Inspects** your repo — detects framework, package manager, existing AI config files
+2. **Creates** `ai-workspace.json` — a single manifest describing your AI workspace
+3. **Plans** which files to generate based on your targets and setup mode
+4. **Generates** shared docs, prompts, and tool-specific files (AGENTS.md, copilot-instructions, .claude/, .mcp.json)
 
-## Current Status
+Supports `dashboard`, `web-app`, and `api-service` project types.
 
-This repo is no longer docs-only. It now includes:
-
-- a buildable TypeScript package scaffold
-- a CLI entrypoint and command shells
-- manifest schema, defaults, normalization, load, and save
-- repo inspection and stack hints
-- generation planning and warnings
-- a first real `generate` and `diff` path
-- unit and integration tests
-
-Still early:
-
-- interactive `init` is still shallow
-- generated file content is functional but not fully polished
-- `doctor` has structure but is not feature-complete yet
-- the current MVP is still most optimized for dashboard and internal-tool workflows
-
-## Vision
-
-Set up a portable, reviewable AI coding environment for web development in one command.
-
-## Install and Use
+## Install
 
 ```bash
+# Run without installing
 npx agenv-cli --help
-```
 
-```bash
+# Or install globally
 npm install -g agenv-cli
 agenv --help
 ```
 
-Examples:
+## Commands
 
-```bash
-agenv init --yes
-agenv generate
+| Command | Description |
+|---|---|
+| `agenv init` | Create `ai-workspace.json` from repo inspection + interactive prompts |
+| `agenv init --yes` | Non-interactive mode with recommended defaults |
+| `agenv generate` | Generate all planned files from the manifest |
+| `agenv generate --dry-run` | Preview what would be generated without writing |
+| `agenv generate --force` | Overwrite files modified outside agenv |
+| `agenv diff` | Show what `generate` would change |
+| `agenv doctor` | Validate manifest and repo compatibility |
+| `agenv templates list` | List available starter templates |
+
+## How It Works
+
+```
+agenv init          →  ai-workspace.json (your manifest)
+agenv generate      →  AGENTS.md, .github/copilot-instructions.md,
+                       .claude/*, .mcp.json, docs/ai-prompts/*
+agenv diff          →  preview changes before writing
+agenv doctor        →  validate everything is consistent
 ```
 
-```bash
-agenv diff
-agenv templates-list
-```
+Generated files include a header comment so agenv knows which files it manages. Files you edit by hand are protected from overwrite (unless you use `--force`). Backups are created in `.agenv-backups/` before any overwrite.
 
-## Start Here
+## Documentation
 
-If you are new to the repo, read these in order:
+| Doc | Purpose |
+|---|---|
+| [Getting Started](doc/getting-started.md) | Contributor onboarding |
+| [Product Requirements](doc/prd.md) | Product goals and scope |
+| [Technical Requirements](doc/trd.md) | Architecture and technical design |
+| [CLI Spec](doc/cli-spec.md) | Command contract and flag reference |
+| [Manifest Spec](doc/manifest-spec.md) | Manifest schema and field definitions |
+| [Output Map](doc/output-map.md) | Which files are generated and when |
+| [Adapter Contract](doc/adapter-contract.md) | How adapters work |
+| [Implementation Plan](doc/implementation-plan.md) | Roadmap and phasing |
 
-- contributor guide: [doc/getting-started.md](/Users/syoo/Documents/code/agenv-package/doc/getting-started.md)
-- product requirements: [doc/prd.md](/Users/syoo/Documents/code/agenv-package/doc/prd.md)
-- technical requirements: [doc/trd.md](/Users/syoo/Documents/code/agenv-package/doc/trd.md)
-- CLI contract: [doc/cli-spec.md](/Users/syoo/Documents/code/agenv-package/doc/cli-spec.md)
-- manifest contract: [doc/manifest-spec.md](/Users/syoo/Documents/code/agenv-package/doc/manifest-spec.md)
-- output map: [doc/output-map.md](/Users/syoo/Documents/code/agenv-package/doc/output-map.md)
-- adapter contract: [doc/adapter-contract.md](/Users/syoo/Documents/code/agenv-package/doc/adapter-contract.md)
-- implementation plan: [doc/implementation-plan.md](/Users/syoo/Documents/code/agenv-package/doc/implementation-plan.md)
+## Contributing
 
-## Development Commands
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, development commands, and PR guidelines.
 
 ```bash
 npm install
 npm test
 npm run typecheck
 npm run build
-node dist/cli/index.js --help
 ```
 
-## Package Shape
+## License
 
-```text
-src/
-  adapters/
-  cli/
-  detect/
-  doctor/
-  fs/
-  manifest/
-  planner/
-  render/
-  templates/
-  utils/
-doc/
-tests/
-```
-
-## Best Next Step
-
-The strongest near-term path is to keep improving the first usable slice:
-
-1. make generated files richer and less placeholder-like
-2. deepen `init --yes` and preview behavior
-3. expand `doctor`
-4. add more integration coverage around real CLI behavior
+[MIT](LICENSE)

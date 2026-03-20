@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
+import { isAgenvError } from "../errors.js";
 import { registerDiffCommand } from "./commands/diff.js";
 import { registerDoctorCommand } from "./commands/doctor.js";
 import { registerGenerateCommand } from "./commands/generate.js";
@@ -32,7 +33,11 @@ async function main(): Promise<void> {
 }
 
 main().catch((error: unknown) => {
-  const message = error instanceof Error ? error.message : "Unknown error";
-  console.error(message);
+  if (isAgenvError(error)) {
+    console.error(`[${error.code}] ${error.message}`);
+  } else {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error(message);
+  }
   process.exitCode = 1;
 });

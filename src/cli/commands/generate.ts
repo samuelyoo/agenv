@@ -10,6 +10,7 @@ import { formatCommandOutput, formatTextBlock, parseCommaList } from "../../util
 type GenerateOptions = {
   dryRun?: boolean;
   json?: boolean;
+  force?: boolean;
   targets?: string;
   layer?: string;
   scope?: string;
@@ -39,6 +40,7 @@ function compactObject<T extends Record<string, unknown>>(value: T): Partial<T> 
 export type RunGenerateOptions = {
   cwd: string;
   dryRun?: boolean;
+  force?: boolean;
   targets?: AdapterTarget[] | undefined;
   layers?: OutputLayer[] | undefined;
   scopes?: OutputScope[] | undefined;
@@ -65,7 +67,7 @@ export async function runGenerate(options: RunGenerateOptions): Promise<RunGener
   const renderedFiles = renderPlanFiles(manifest, plan);
   const summary = options.dryRun
     ? await summarizeRenderedDiff(options.cwd, renderedFiles)
-    : await writeRenderedFiles(options.cwd, renderedFiles);
+    : await writeRenderedFiles(options.cwd, renderedFiles, { force: options.force });
 
   return {
     command: "generate",
@@ -82,6 +84,7 @@ export function registerGenerateCommand(program: Command): void {
     .description("Load a manifest and compute the generation plan.")
     .option("--dry-run", "plan without writing files")
     .option("--json", "emit machine-readable output")
+    .option("--force", "overwrite files modified outside agenv")
     .option("--targets <list>", "limit generation to selected targets")
     .option("--layer <list>", "limit generation to selected layers")
     .option("--scope <list>", "limit generation to shared or local scope")
@@ -89,6 +92,7 @@ export function registerGenerateCommand(program: Command): void {
       const result = await runGenerate({
         cwd: process.cwd(),
         dryRun: Boolean(options.dryRun),
+        force: Boolean(options.force),
         ...compactObject({
           targets: parseTargets(options.targets),
           layers: parseLayers(options.layer),
@@ -96,16 +100,36 @@ export function registerGenerateCommand(program: Command): void {
         }),
       });
 
-      const text = formatTextBlock([
+      const skippedCount = "skipped" in result.summary ? result.summary.skipped.length : result.summary.skip.length;
+      const skippedList = "skipped" in result.summary ? result.summary.skipped : result.summary.skip;
+      const backedUpCount = "backedUp" in result.summary ? result.summary.backedUp.length : 0;
+
+      const lines = [
         `Manifest: ${result.manifestPath}`,
         `Planned files: ${result.plan.files.length}`,
         `Warnings: ${result.plan.warnings.length}`,
         `Created: ${"created" in result.summary ? result.summary.created.length : result.summary.create.length}`,
         `Updated: ${"updated" in result.summary ? result.summary.updated.length : result.summary.update.length}`,
         `Unchanged: ${result.summary.unchanged.length}`,
-        `Skipped: ${"skipped" in result.summary ? result.summary.skipped.length : result.summary.skip.length}`,
-        result.dryRun ? "Dry run only: files were not written." : "Files written successfully.",
-      ]);
+        `Skipped: ${skippedCount}`,
+      ];
+
+      if (backedUpCount > 0) {
+        lines.push(`Backed up: ${backedUpCount}`);
+      }
+
+      if (skippedCount > 0 && !result.dryRun) {
+        lines.push("");
+        lines.push("Skipped files (modified outside agenv):");
+        for (const path of skippedList) {
+          lines.push(`  ${path}`);
+        }
+        lines.push('Use --force to overwrite these files.');
+      }
+
+      lines.push(result.dryRun ? "Dry run only: files were not written." : "Files written successfully.");
+
+      const text = formatTextBlock(lines);
 
       process.stdout.write(formatCommandOutput(text, result, Boolean(options.json)));
     });

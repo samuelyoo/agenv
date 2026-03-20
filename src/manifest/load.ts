@@ -1,6 +1,8 @@
 import { access } from "node:fs/promises";
 import { basename, join } from "node:path";
+import { ManifestNotFoundError, ManifestValidationError } from "../errors.js";
 import { readJsonFile } from "../utils/json.js";
+import { migrateManifest } from "./migrate.js";
 import { normalizeManifest } from "./normalize.js";
 import type { Framework, Manifest } from "./schema.js";
 
@@ -27,10 +29,20 @@ export async function loadManifest(
   const localPath = join(cwd, "ai-workspace.local.json");
 
   if (!(await fileExists(sharedPath))) {
-    throw new Error(`No manifest found at ${sharedPath}`);
+    throw new ManifestNotFoundError(sharedPath);
   }
 
-  const sharedInput = await readJsonFile<unknown>(sharedPath);
+  let sharedInput: unknown;
+  try {
+    sharedInput = await readJsonFile<unknown>(sharedPath);
+  } catch (error: unknown) {
+    const reason = error instanceof Error ? error.message : "unknown error";
+    throw new ManifestValidationError([`Failed to parse ${sharedPath}: ${reason}`]);
+  }
+
+  // Migrate manifest to current schema version if needed
+  sharedInput = migrateManifest(sharedInput);
+
   const localInput = (await fileExists(localPath))
     ? await readJsonFile<unknown>(localPath)
     : undefined;
