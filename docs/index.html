@@ -10,7 +10,7 @@ description: Bootstrap a portable, reviewable AI workspace for web repositories 
     <h1>Define your AI workspace once.</h1>
     <p class="hero-support">
       agenv gives teams one calm, reviewable place to manage Codex, Copilot,
-      Claude, and MCP setup.
+      Claude, MCP, Cursor, and Windsurf setup.
     </p>
     <p class="lede">
       Scan the repo, create <code>ai-workspace.json</code>, and generate the
@@ -38,10 +38,7 @@ description: Bootstrap a portable, reviewable AI workspace for web repositories 
     </div>
 
     <div class="meta-strip">
-      <span
-        >Works for <strong>dashboard</strong>, <strong>web-app</strong>, and
-        <strong>api-service</strong></span
-      >
+      <span>Works for <strong>7 project types</strong> including <strong>library</strong>, <strong>cli-tool</strong>, and <strong>mobile</strong></span>
       <span>Open source, <strong>MIT licensed</strong>, CLI-first</span>
       <span>Protects manual edits unless you <strong>force</strong></span>
     </div>
@@ -75,7 +72,9 @@ $ agenv generate</code></pre>
     "codex": true,
     "copilot": true,
     "claude": true,
-    "mcp": false
+    "mcp": false,
+    "cursor": false,
+    "windsurf": false
   }
 }</code></pre>
         </div>
@@ -97,6 +96,11 @@ $ agenv generate</code></pre>
             <p class="artifact-kicker">Generated</p>
             <h2>.claude and .mcp.json</h2>
             <p>Shared defaults, better reviewability, less config drift.</p>
+          </article>
+          <article class="artifact-card">
+            <p class="artifact-kicker">Generated</p>
+            <h2>.cursor/rules and .windsurf/rules</h2>
+            <p>Cursor and Windsurf rule files generated from the same manifest as everything else.</p>
           </article>
         </div>
       </div>
@@ -150,12 +154,16 @@ $ agenv generate</code></pre>
     <span>GitHub Copilot</span>
     <span>Claude Code</span>
     <span>MCP Servers</span>
+    <span>Cursor</span>
+    <span>Windsurf</span>
     <span>Portable manifests</span>
     <span>Repo-safe generation</span>
     <span>Codex</span>
     <span>GitHub Copilot</span>
     <span>Claude Code</span>
     <span>MCP Servers</span>
+    <span>Cursor</span>
+    <span>Windsurf</span>
     <span>Portable manifests</span>
     <span>Repo-safe generation</span>
   </div>
@@ -287,8 +295,13 @@ $ agenv generate</code></pre>
     <article class="pill-card">
       <h3>MCP configuration</h3>
       <p>
-        Reviewable server presets and placeholders fit into the same workflow as
-        the rest of the repo.
+        Reviewable server presets — including Notion, Stripe, GitHub, and more — with trust-level annotations baked in.
+      </p>
+    </article>
+    <article class="pill-card">
+      <h3>Cursor &amp; Windsurf rules</h3>
+      <p>
+        Rule files for Cursor (<code>.mdc</code>) and Windsurf (<code>.md</code>) generated from the same manifest as every other target.
       </p>
     </article>
   </div>
@@ -324,15 +337,14 @@ $ agenv generate</code></pre>
     <article class="pill-card">
       <h3>Multi-tool on purpose</h3>
       <p>
-        Generate Codex, Copilot, Claude, and MCP config without duplicating
+        Generate Codex, Copilot, Claude, MCP, Cursor, and Windsurf config without duplicating
         intent across tools.
       </p>
     </article>
     <article class="pill-card">
       <h3>Made for web repos</h3>
       <p>
-        Supports dashboard, web-app, and api-service project types with
-        stack-aware defaults.
+        Supports 7 project types — dashboard, web-app, api-service, full-stack, library, cli-tool, and mobile — with stack-aware defaults.
       </p>
     </article>
   </div>

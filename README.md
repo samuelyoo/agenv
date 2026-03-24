@@ -3,9 +3,9 @@
 [![npm version](https://img.shields.io/npm/v/agenv-cli.svg)](https://www.npmjs.com/package/agenv-cli)
 [![license](https://img.shields.io/npm/l/agenv-cli.svg)](LICENSE)
 
-Generate portable AI workspace configs for any web development project — one manifest for Copilot, Claude, Codex, and MCP.
+Generate portable AI workspace configs for any web development project — one manifest for Copilot, Claude, Codex, MCP, Cursor, and Windsurf.
 
-Define one canonical `ai-workspace.json` manifest, then generate tool-specific configuration files for Codex, Copilot, Claude, and MCP-compatible tooling.
+Define one canonical `ai-workspace.json` manifest, then generate tool-specific configuration files for all six targets from a single source of truth.
 
 ## Quick Start
 
@@ -27,7 +27,7 @@ That's it. `agenv` inspects your repo, creates `ai-workspace.json`, and generate
 3. **Plans** which files to generate based on your targets and setup mode
 4. **Generates** shared docs, prompts, and tool-specific files (AGENTS.md, copilot-instructions, .claude/, .mcp.json)
 
-Supports `web-app`, `api-service`, and `dashboard` project types.
+Supports seven project types: `dashboard`, `web-app`, `api-service`, `full-stack`, `library`, `cli-tool`, and `mobile`.
 
 ## Install
 
@@ -61,6 +61,35 @@ agenv doctor        →  validate everything is consistent
 
 Generated files include a header comment so agenv knows which files it manages. Files you edit by hand are protected from overwrite (unless you use `--force`). Backups are created in `.agenv-backups/` before any overwrite.
 
+## Supported Targets
+
+| Target | Output |
+|---|---|
+| `codex` | `AGENTS.md` |
+| `copilot` | `.github/copilot-instructions.md` |
+| `claude` | `.claude/README.md`, `.claude/skills/*.md`, `.claude/agents/*.md`, `.claude/settings.local.json` |
+| `mcp` | `.mcp.json`, `.mcp.local.json` |
+| `cursor` | `.cursor/rules/context.mdc`, `.cursor/rules/coding-style.mdc`, `.cursor/rules/review.mdc` |
+| `windsurf` | `.windsurf/rules/context.md`, `.windsurf/rules/coding-style.md`, `.windsurf/rules/review.md` |
+
+## Project Types
+
+| Type | Description |
+|---|---|
+| `dashboard` | Internal data/admin dashboard |
+| `web-app` | Consumer-facing web application |
+| `api-service` | Backend API service |
+| `full-stack` | Combined frontend + backend (e.g. Next.js full-stack) |
+| `library` | Reusable npm package or component library |
+| `cli-tool` | Node.js command-line tool |
+| `mobile` | React Native / Expo mobile app |
+
+## MCP Presets
+
+Built-in presets with trust annotations: `filesystem`, `github`, `fetch`, `memory`, `postgres`, `sqlite`, `puppeteer`, `sequential-thinking`, `notion`, `stripe`, `atlassian`.
+
+Select presets during `agenv init` or add them to `generated.mcpPresets` in your manifest. Non-safe presets include `_trustLevel` and `_trustNote` annotations in `.mcp.json`.
+
 ## Documentation
 
 | Doc | Purpose |
@@ -72,11 +101,14 @@ Generated files include a header comment so agenv knows which files it manages. 
 | [Manifest Spec](doc/manifest-spec.md) | Manifest schema and field definitions |
 | [Output Map](doc/output-map.md) | Which files are generated and when |
 | [Adapter Contract](doc/adapter-contract.md) | How adapters work |
-| [Implementation Plan](doc/implementation-plan.md) | Roadmap and phasing |
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, development commands, and PR guidelines.
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for the vulnerability reporting policy.
 
 ```bash
 npm install
