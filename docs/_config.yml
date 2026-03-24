@@ -1,0 +1,9 @@
+title: agenv
+description: Bootstrap a portable, reviewable AI workspace for web repositories.
+url: "https://samuelyoo.github.io"
+baseurl: "/agenv"
+repository_url: "https://github.com/samuelyoo/agenv"
+npm_url: "https://www.npmjs.com/package/agenv-cli"
+install_command: "npm install -g agenv-cli"
+markdown: kramdown
+permalink: pretty

@@ -1,0 +1,283 @@
+---
+layout: default
+title: agenv | The Manifest Layer for AI-Native Repos
+description: Bootstrap a portable, reviewable AI workspace for web repositories with one canonical ai-workspace.json manifest.
+---
+
+<section class="hero" id="top">
+  <div class="hero-copy">
+    <p class="eyebrow">Open source AI workspace infrastructure</p>
+    <h1>Stop rebuilding AI setup in every repo.</h1>
+    <p class="lede">
+      <strong>agenv</strong> gives your project one reviewable source of truth
+      for Codex, Copilot, Claude, and MCP tooling. Scan the repo, create
+      <code>ai-workspace.json</code>, and generate the instructions and config
+      files your team actually needs.
+    </p>
+
+    <div class="cta-row">
+      <a
+        class="button button-primary"
+        href="{{ site.repository_url }}"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Star on GitHub
+      </a>
+      <button
+        class="button button-secondary"
+        id="copy-install"
+        type="button"
+        data-copy-text="{{ site.install_command }}"
+      >
+        Copy install command
+      </button>
+    </div>
+
+    <div class="meta-strip">
+      <span
+        >Works for <strong>dashboard</strong>, <strong>web-app</strong>, and
+        <strong>api-service</strong></span
+      >
+      <span>Open source, <strong>MIT licensed</strong>, CLI-first</span>
+      <span>Protects manual edits unless you <strong>force</strong></span>
+    </div>
+  </div>
+
+  <div class="hero-stage" aria-label="agenv product preview">
+    <div class="floating-note">
+      <span class="status-dot"></span>
+      The manifest layer for AI-native teams
+    </div>
+
+    <div class="hero-console">
+      <div class="window-chrome">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="console-grid">
+        <div class="console-block">
+          <p class="block-label">setup in under a minute</p>
+          <pre><code>$ {{ site.install_command }}
+$ agenv init --yes
+$ agenv generate</code></pre>
+        </div>
+
+        <div class="console-block">
+          <p class="block-label">canonical source of truth</p>
+          <pre><code>{
+  "project": { "type": "web-app" },
+  "targets": {
+    "codex": true,
+    "copilot": true,
+    "claude": true,
+    "mcp": false
+  }
+}</code></pre>
+        </div>
+
+        <div class="artifact-row">
+          <article class="artifact-card">
+            <p class="artifact-kicker">Generated</p>
+            <h2>AGENTS.md</h2>
+            <p>Codex guidance without hand-maintaining repo prompts forever.</p>
+          </article>
+          <article class="artifact-card">
+            <p class="artifact-kicker">Generated</p>
+            <h2>.github/copilot-instructions.md</h2>
+            <p>
+              Copilot instructions stay aligned with the rest of your AI stack.
+            </p>
+          </article>
+          <article class="artifact-card">
+            <p class="artifact-kicker">Generated</p>
+            <h2>.claude and .mcp.json</h2>
+            <p>Shared defaults, better reviewability, less config drift.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="signal-rail" aria-label="Supported tooling">
+  <div class="signal-track">
+    <span>Codex</span>
+    <span>GitHub Copilot</span>
+    <span>Claude Code</span>
+    <span>MCP Servers</span>
+    <span>Portable manifests</span>
+    <span>Repo-safe generation</span>
+    <span>Codex</span>
+    <span>GitHub Copilot</span>
+    <span>Claude Code</span>
+    <span>MCP Servers</span>
+    <span>Portable manifests</span>
+    <span>Repo-safe generation</span>
+  </div>
+</section>
+
+<section class="section" id="story">
+  <div class="section-copy">
+    <p class="eyebrow">Why this gets passed around</p>
+    <h2>It fixes a pain every AI-heavy codebase eventually feels.</h2>
+    <p>
+      The story is simple enough to repeat: stop teaching every repository the
+      same AI rules by hand. Make the workspace reviewable, portable, and
+      regenerable.
+    </p>
+  </div>
+
+  <div class="story-grid">
+    <article class="story-card story-card-quote">
+      <p class="quote-mark">"</p>
+      <h3>One file decides how your AI tooling behaves.</h3>
+      <p>
+        No more drifting prompts and one-off config edits scattered across the
+        repo.
+      </p>
+    </article>
+
+    <article class="story-card">
+      <p class="card-index">01</p>
+      <h3>Scan first, then generate</h3>
+      <p>
+        agenv inspects the repo, detects the stack, and starts from the codebase
+        you already have.
+      </p>
+    </article>
+
+    <article class="story-card">
+      <p class="card-index">02</p>
+      <h3>Review changes like code</h3>
+      <p>
+        <code>agenv diff</code> and generated headers keep the workflow safe for
+        real teams.
+      </p>
+    </article>
+
+    <article class="story-card">
+      <p class="card-index">03</p>
+      <h3>Carry the setup across tools</h3>
+      <p>
+        Codex, Copilot, Claude, and MCP outputs come from one system instead of
+        four separate rituals.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="section section-split" id="flow">
+  <div class="flow-panel">
+    <p class="eyebrow">How it works</p>
+    <h2>Fast enough for solo builders, structured enough for teams.</h2>
+    <ol class="steps">
+      <li>
+        <strong>Inspect the repository.</strong>
+        Detect frameworks, package managers, and existing AI files.
+      </li>
+      <li>
+        <strong>Create <code>ai-workspace.json</code>.</strong>
+        Capture targets, generation depth, prompts, and tool preferences.
+      </li>
+      <li>
+        <strong>Generate the outputs you want.</strong>
+        Write instructions, prompt packs, and tool-specific config from one
+        plan.
+      </li>
+    </ol>
+  </div>
+
+  <div class="flow-panel flow-panel-dark">
+    <p class="eyebrow">Command surface</p>
+    <ul class="command-list">
+      <li>
+        <code>agenv init</code> creates the manifest from repo inspection plus
+        prompts.
+      </li>
+      <li>
+        <code>agenv generate</code> writes the planned files for enabled
+        targets.
+      </li>
+      <li>
+        <code>agenv diff</code> previews changes before the repo is touched.
+      </li>
+      <li>
+        <code>agenv doctor</code> validates compatibility and manifest health.
+      </li>
+      <li><code>agenv templates list</code> shows starter templates.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section section-stack">
+  <div class="section-copy">
+    <p class="eyebrow">Built for open source</p>
+    <h2>Not another AI wrapper. Infrastructure your repo can keep.</h2>
+  </div>
+
+  <div class="pill-grid">
+    <article class="pill-card">
+      <h3>Manifest first</h3>
+      <p>
+        The workspace is described in a plain file your team can diff, discuss,
+        and commit.
+      </p>
+    </article>
+    <article class="pill-card">
+      <h3>Safe by default</h3>
+      <p>
+        Manual edits stay protected unless you explicitly ask agenv to overwrite
+        them.
+      </p>
+    </article>
+    <article class="pill-card">
+      <h3>Multi-tool on purpose</h3>
+      <p>
+        Generate Codex, Copilot, Claude, and MCP config without duplicating
+        intent across tools.
+      </p>
+    </article>
+    <article class="pill-card">
+      <h3>Made for web repos</h3>
+      <p>
+        Supports dashboard, web-app, and api-service project types with
+        stack-aware defaults.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="section section-cta" id="launch">
+  <div class="launch-panel">
+    <div>
+      <p class="eyebrow">Launch</p>
+      <h2>Ship the story and the repo together.</h2>
+      <p>
+        This page is built for GitHub Pages with Jekyll, so the marketing
+        surface and the open-source code can live in the same repository without
+        fighting each other.
+      </p>
+    </div>
+
+    <div class="launch-actions">
+      <a
+        class="button button-primary"
+        href="{{ site.repository_url }}"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Open repository
+      </a>
+      <a
+        class="button button-secondary"
+        href="{{ site.npm_url }}"
+        target="_blank"
+        rel="noreferrer"
+      >
+        View on npm
+      </a>
+    </div>
+  </div>
+</section>

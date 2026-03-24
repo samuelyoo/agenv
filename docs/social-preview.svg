@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="agenv social preview">
+  <defs>
+    <linearGradient id="bg" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#08111f" />
+      <stop offset="100%" stop-color="#0c1b31" />
+    </linearGradient>
+    <radialGradient id="glowA" cx="18%" cy="18%" r="42%">
+      <stop offset="0%" stop-color="#ff8c42" stop-opacity=".42" />
+      <stop offset="100%" stop-color="#ff8c42" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowB" cx="82%" cy="20%" r="34%">
+      <stop offset="0%" stop-color="#79f0d0" stop-opacity=".25" />
+      <stop offset="100%" stop-color="#79f0d0" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect width="1200" height="630" fill="url(#glowA)" />
+  <rect width="1200" height="630" fill="url(#glowB)" />
+
+  <g opacity=".08">
+    <path d="M0 94h1200M0 188h1200M0 282h1200M0 376h1200M0 470h1200M0 564h1200" stroke="#ffffff" />
+    <path d="M120 0v630M240 0v630M360 0v630M480 0v630M600 0v630M720 0v630M840 0v630M960 0v630M1080 0v630" stroke="#ffffff" />
+  </g>
+
+  <g transform="translate(80 86)">
+    <rect width="124" height="124" rx="30" fill="#0e2037" stroke="#243852" />
+    <path d="M62 16 95 106H78L70 84H53L46 106H29L62 16Zm3 47-8-22-8 22h16Z" fill="#ffb567" />
+    <text x="154" y="52" fill="#f5f2ea" font-family="Space Grotesk, Arial, sans-serif" font-size="42" font-weight="700">agenv</text>
+    <text x="154" y="103" fill="#ffe082" font-family="IBM Plex Mono, monospace" font-size="22" letter-spacing="3">OPEN SOURCE AI WORKSPACE INFRA</text>
+  </g>
+
+  <g transform="translate(80 238)">
+    <text fill="#f5f2ea" font-family="Space Grotesk, Arial, sans-serif" font-size="84" font-weight="700">
+      <tspan x="0" y="0">One manifest for</tspan>
+      <tspan x="0" y="94">every AI coding tool.</tspan>
+    </text>
+    <text x="0" y="238" fill="#b9c4d1" font-family="IBM Plex Mono, monospace" font-size="28">
+      Create a canonical ai-workspace.json and generate Codex, Copilot,
+    </text>
+    <text x="0" y="280" fill="#b9c4d1" font-family="IBM Plex Mono, monospace" font-size="28">
+      Claude, and MCP setup from one reviewable source of truth.
+    </text>
+  </g>
+
+  <g transform="translate(810 342)">
+    <rect width="290" height="170" rx="26" fill="#0d1f35" stroke="#2a3f5d" />
+    <text x="26" y="38" fill="#ffe082" font-family="IBM Plex Mono, monospace" font-size="18">ai-workspace.json</text>
+    <text x="26" y="74" fill="#79f0d0" font-family="IBM Plex Mono, monospace" font-size="18">"codex": true</text>
+    <text x="26" y="104" fill="#79f0d0" font-family="IBM Plex Mono, monospace" font-size="18">"copilot": true</text>
+    <text x="26" y="134" fill="#79f0d0" font-family="IBM Plex Mono, monospace" font-size="18">"claude": true</text>
+  </g>
+</svg>
