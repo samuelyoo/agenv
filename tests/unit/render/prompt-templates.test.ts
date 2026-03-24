@@ -3,12 +3,13 @@ import { PROMPT_TEMPLATE_DEFINITIONS } from "../../../src/render/prompt-template
 import type { PromptTemplateDefinition } from "../../../src/render/prompt-templates.js";
 
 describe("PROMPT_TEMPLATE_DEFINITIONS", () => {
-  it("contains all 16 expected templates", () => {
+  it("contains all 57 expected templates", () => {
     const keys = Object.keys(PROMPT_TEMPLATE_DEFINITIONS);
-    expect(keys).toHaveLength(16);
+    expect(keys).toHaveLength(57);
 
     expect(keys).toEqual(
       expect.arrayContaining([
+        // Dashboard skills & agents (original 16)
         "build-page-shell",
         "build-data-table",
         "build-filter-panel",
@@ -25,6 +26,55 @@ describe("PROMPT_TEMPLATE_DEFINITIONS", () => {
         "chart-specialist",
         "form-builder",
         "qa-reviewer",
+        // Web-app skills
+        "build-page-layout",
+        "build-navigation",
+        "build-auth-flow",
+        "build-state-management",
+        "build-api-integration",
+        "implement-routing",
+        "write-web-app-tests",
+        // Web-app agents
+        "state-architect",
+        "api-integrator",
+        "auth-specialist",
+        "test-writer",
+        // API-service skills
+        "design-api-endpoints",
+        "build-request-validation",
+        "build-database-layer",
+        "build-auth-middleware",
+        "build-error-handling",
+        "implement-logging",
+        "write-api-tests",
+        "build-background-jobs",
+        "configure-deployment",
+        "document-api",
+        // API-service agents
+        "api-designer",
+        "data-layer-builder",
+        "error-handler",
+        "devops-reviewer",
+        // Full-stack skills
+        "write-full-stack-tests",
+        // Library skills & agents
+        "design-public-api",
+        "write-library-tests",
+        "build-tree-shakeable-exports",
+        "generate-typedoc",
+        "configure-build",
+        "docs-writer",
+        // CLI-tool skills & agents
+        "design-commands",
+        "build-arg-parsing",
+        "implement-config-file",
+        "write-cli-tests",
+        "configure-package-bin",
+        "cli-designer",
+        // Mobile skills
+        "build-screen-layout",
+        "build-navigation-stack",
+        "write-mobile-tests",
       ]),
     );
   });

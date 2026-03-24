@@ -118,7 +118,7 @@ describe("normalizeManifest", () => {
           },
           generated: {
             prompts: "none",
-            mcpPresets: ["filesystem-local"],
+            mcpPresets: ["filesystem"],
           },
         },
       },
@@ -127,7 +127,7 @@ describe("normalizeManifest", () => {
     expect(manifest.setup.scope).toBe("mixed");
     expect(manifest.targets.mcp).toBe(true);
     expect(manifest.generated.prompts).toBe("none");
-    expect(manifest.generated.mcpPresets).toEqual(["filesystem-local"]);
+    expect(manifest.generated.mcpPresets).toEqual(["filesystem"]);
     expect(manifest.project.name).toBe("ops-dashboard");
   });
 

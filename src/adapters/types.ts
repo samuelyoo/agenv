@@ -1,7 +1,7 @@
 import type { Manifest } from "../manifest/schema.js";
 import type { GenerationPlan, PlannedFile } from "../planner/build-plan.js";
 
-export type AdapterId = "codex" | "copilot" | "claude" | "mcp";
+export type AdapterId = "codex" | "copilot" | "claude" | "mcp" | "cursor" | "windsurf";
 
 export type SupportIssue = {
   severity: "warning" | "error";

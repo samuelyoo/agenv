@@ -24,6 +24,10 @@ function plan(_manifest: Manifest, generationPlan: GenerationPlan): PlannedFile[
 function describeProjectType(manifest: Manifest): string {
   if (manifest.project.type === "web-app") return "web application";
   if (manifest.project.type === "api-service") return "API service";
+  if (manifest.project.type === "full-stack") return "full-stack application";
+  if (manifest.project.type === "library") return "library";
+  if (manifest.project.type === "cli-tool") return "CLI tool";
+  if (manifest.project.type === "mobile") return "mobile application";
   return "dashboard";
 }
 

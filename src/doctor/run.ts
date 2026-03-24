@@ -4,6 +4,7 @@ import type { Manifest } from "../manifest/schema.js";
 import { runCompatibilityChecks } from "./checks/compatibility.js";
 import { runEnvChecks } from "./checks/env.js";
 import { runManifestChecks } from "./checks/manifest.js";
+import { checkMcpConfigFormat, checkMcpEnvVars } from "./checks/mcp.js";
 import { runPathChecks } from "./checks/paths.js";
 import { runRepoMatchChecks } from "./checks/repo-match.js";
 import { runSecurityChecks } from "./checks/security.js";
@@ -49,6 +50,8 @@ export async function runDoctor(
     ...runEnvChecks(manifest),
     ...(await runPathChecks(cwd, manifest)),
     ...runRepoMatchChecks(manifest, inspection),
+    ...checkMcpEnvVars(manifest),
+    ...(await checkMcpConfigFormat(cwd, manifest)),
   ];
 
   const result = partitionFindings(findings);

@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/agenv-cli.svg)](https://www.npmjs.com/package/agenv-cli)
 [![license](https://img.shields.io/npm/l/agenv-cli.svg)](LICENSE)
 
-Bootstrap a portable, reviewable AI workspace for web development repositories — in one command.
+Generate portable AI workspace configs for any web development project — one manifest for Copilot, Claude, Codex, and MCP.
 
 Define one canonical `ai-workspace.json` manifest, then generate tool-specific configuration files for Codex, Copilot, Claude, and MCP-compatible tooling.
 
@@ -27,7 +27,7 @@ That's it. `agenv` inspects your repo, creates `ai-workspace.json`, and generate
 3. **Plans** which files to generate based on your targets and setup mode
 4. **Generates** shared docs, prompts, and tool-specific files (AGENTS.md, copilot-instructions, .claude/, .mcp.json)
 
-Supports `dashboard`, `web-app`, and `api-service` project types.
+Supports `web-app`, `api-service`, and `dashboard` project types.
 
 ## Install
 

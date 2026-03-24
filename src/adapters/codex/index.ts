@@ -24,6 +24,10 @@ function plan(_manifest: Manifest, generationPlan: GenerationPlan): PlannedFile[
 function describeProjectType(manifest: Manifest): string {
   if (manifest.project.type === "web-app") return "web application";
   if (manifest.project.type === "api-service") return "API service";
+  if (manifest.project.type === "full-stack") return "full-stack application";
+  if (manifest.project.type === "library") return "library";
+  if (manifest.project.type === "cli-tool") return "CLI tool";
+  if (manifest.project.type === "mobile") return "mobile application";
   return "dashboard";
 }
 
@@ -91,6 +95,44 @@ function buildConventionsSection(manifest: Manifest): string {
     rules.push(
       `API style: ${manifest.apiService.apiStyle}. Validation: ${manifest.apiService.validation}. ORM: ${manifest.apiService.orm}.`,
       `Auth: ${manifest.apiService.auth}. Testing stack: ${manifest.apiService.testing.join(", ")}.`,
+    );
+  }
+
+  if (manifest.project.type === "web-app" && manifest.webApp) {
+    rules.push(
+      `Styling: ${manifest.webApp.styling}. Components: ${manifest.webApp.components}.`,
+      `State management: ${manifest.webApp.stateManagement}. Data fetching: ${manifest.webApp.dataFetching}.`,
+      `Forms: ${manifest.webApp.forms}. Auth: ${manifest.webApp.auth}.`,
+      `Testing stack: ${manifest.webApp.testing.join(", ")}.`,
+    );
+  }
+
+  if (manifest.project.type === "full-stack" && manifest.fullStack) {
+    rules.push(
+      `API style: ${manifest.fullStack.apiStyle}. ORM: ${manifest.fullStack.orm}. Auth: ${manifest.fullStack.auth}.`,
+      `Styling: ${manifest.fullStack.styling}. Components: ${manifest.fullStack.components}.`,
+      `Testing stack: ${manifest.fullStack.testing.join(", ")}.`,
+    );
+  }
+
+  if (manifest.project.type === "library" && manifest.library) {
+    rules.push(
+      `Bundler: ${manifest.library.bundler}. Publish target: ${manifest.library.publishTarget}.`,
+      `Docs tool: ${manifest.library.docs}. Testing stack: ${manifest.library.testing.join(", ")}.`,
+    );
+  }
+
+  if (manifest.project.type === "cli-tool" && manifest.cliTool) {
+    rules.push(
+      `Runtime: ${manifest.cliTool.runtime}. Arg parser: ${manifest.cliTool.argParser}.`,
+      `Publish target: ${manifest.cliTool.publishTarget}. Testing stack: ${manifest.cliTool.testing.join(", ")}.`,
+    );
+  }
+
+  if (manifest.project.type === "mobile" && manifest.mobile) {
+    rules.push(
+      `Framework: ${manifest.mobile.framework}. Styling: ${manifest.mobile.styling}.`,
+      `Navigation: ${manifest.mobile.navigation}. Testing stack: ${manifest.mobile.testing.join(", ")}.`,
     );
   }
 

@@ -12,10 +12,11 @@ import type { UiAnswers } from "./sessions/ui.js";
 import type { DataAnswers } from "./sessions/data.js";
 import type { QualityAnswers } from "./sessions/quality.js";
 import type { OutputAnswers } from "./sessions/output.js";
+import type { ProjectType } from "../../manifest/schema.js";
 
 export type InitFlowAnswers = {
-  targets: { copilot: boolean; claude: boolean; codex: boolean; mcp: boolean };
-  projectType: "dashboard" | "web-app" | "api-service";
+  targets: { copilot: boolean; claude: boolean; codex: boolean; mcp: boolean; cursor: boolean; windsurf: boolean };
+  projectType: ProjectType;
   setupDepth: "recommended" | "semi-custom" | "advanced";
   framework: "react" | "nextjs" | "vite-react" | "express" | "fastify" | "hono";
   ui: UiAnswers | undefined;
@@ -32,20 +33,20 @@ export async function runInitFlow(detectedFramework?: string): Promise<InitFlowA
   const targets = await runToolsPrompt();
   const projectType = await runProjectTypePrompt();
   const setupDepth = await runSetupDepthPrompt();
-  const isApi = projectType === "api-service";
+  const isNonUi = projectType === "api-service" || projectType === "library" || projectType === "cli-tool";
 
   if (setupDepth === "recommended") {
     return {
       targets,
       projectType,
       setupDepth,
-      framework: isApi
+      framework: isNonUi
         ? "express"
         : ((detectedFramework as "react" | "nextjs" | "vite-react") ?? "react"),
-      ui: isApi ? undefined : { styling: "tailwind", components: "shadcn-ui", charts: "recharts", forms: "react-hook-form-zod", tables: "tanstack-table" },
-      data: isApi ? undefined : { dataFetching: "tanstack-query", state: "local-first" },
-      authModel: isApi ? "custom" : (projectType === "dashboard" ? "rbac" : "custom"),
-      quality: { testing: isApi ? ["vitest"] : ["vitest", "rtl"], accessibility: !isApi, responsive: !isApi },
+      ui: isNonUi ? undefined : { styling: "tailwind", components: "shadcn-ui", charts: "recharts", forms: "react-hook-form-zod", tables: "tanstack-table" },
+      data: isNonUi ? undefined : { dataFetching: "tanstack-query", state: "local-first" },
+      authModel: projectType === "dashboard" ? "rbac" : "custom",
+      quality: { testing: isNonUi ? ["vitest"] : ["vitest", "rtl"], accessibility: !isNonUi, responsive: !isNonUi },
       mcpPresets: [],
       output: { mode: "full", scope: "mixed", prompts: "master" },
     };
@@ -54,8 +55,8 @@ export async function runInitFlow(detectedFramework?: string): Promise<InitFlowA
   const framework = await runStackPrompt(detectedFramework, projectType);
 
   // UI and data prompts only apply to frontend project types
-  const ui = isApi ? undefined : await runUiPrompt();
-  const data = isApi ? undefined : await runDataPrompt();
+  const ui = isNonUi ? undefined : await runUiPrompt();
+  const data = isNonUi ? undefined : await runDataPrompt();
 
   const authModel = await runAuthPrompt();
   const quality = await runQualityPrompt();

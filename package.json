@@ -1,7 +1,7 @@
 {
   "name": "agenv-cli",
   "version": "1.0.0",
-  "description": "Bootstrap a portable, reviewable AI workspace for web development repositories.",
+  "description": "Generate portable AI workspace configs for any web development project — one manifest for Copilot, Claude, Codex, and MCP.",
   "keywords": [
     "ai",
     "cli",
@@ -11,10 +11,17 @@
     "codex",
     "copilot",
     "claude",
+    "cursor",
+    "windsurf",
     "workspace",
-    "dashboard",
+    "web-app",
+    "api-service",
     "frontend",
-    "internal-tools"
+    "internal-tools",
+    "agents-md",
+    "claude-code",
+    "ai-rules",
+    "ai-config"
   ],
   "repository": {
     "type": "git",

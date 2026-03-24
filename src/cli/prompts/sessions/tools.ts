@@ -11,6 +11,8 @@ export async function runToolsPrompt(): Promise<{
   claude: boolean;
   codex: boolean;
   mcp: boolean;
+  cursor: boolean;
+  windsurf: boolean;
 }> {
   const selected = await checkbox({
     message: "Which AI tools should be configured?",
@@ -19,6 +21,8 @@ export async function runToolsPrompt(): Promise<{
       { name: "Claude Code", value: "claude" as const, checked: true },
       { name: "OpenAI Codex", value: "codex" as const, checked: true },
       { name: "MCP Servers", value: "mcp" as const, checked: false },
+      { name: "Cursor", value: "cursor" as const, checked: false },
+      { name: "Windsurf", value: "windsurf" as const, checked: false },
     ],
   });
 
@@ -27,5 +31,7 @@ export async function runToolsPrompt(): Promise<{
     claude: selected.includes("claude"),
     codex: selected.includes("codex"),
     mcp: selected.includes("mcp"),
+    cursor: selected.includes("cursor"),
+    windsurf: selected.includes("windsurf"),
   };
 }

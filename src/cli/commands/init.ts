@@ -36,7 +36,7 @@ type InitOptions = {
   prompts?: PromptMode;
 };
 
-const SUPPORTED_PROJECT_TYPES: ProjectType[] = ["dashboard", "web-app", "api-service"];
+const SUPPORTED_PROJECT_TYPES: ProjectType[] = ["dashboard", "web-app", "api-service", "full-stack", "library", "cli-tool", "mobile"];
 
 function buildTargetFlags(targets?: string) {
   const selectedTargets = parseCommaList(targets);
@@ -50,6 +50,8 @@ function buildTargetFlags(targets?: string) {
     claude: selectedTargets.includes("claude"),
     codex: selectedTargets.includes("codex"),
     mcp: selectedTargets.includes("mcp"),
+    cursor: selectedTargets.includes("cursor"),
+    windsurf: selectedTargets.includes("windsurf"),
   };
 }
 

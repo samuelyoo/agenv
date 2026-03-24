@@ -41,6 +41,7 @@ describe("buildGenerationPlan", () => {
     const manifest = buildRecommendedManifest({
       name: "ops-dashboard",
       framework: "vite-react",
+      projectType: "dashboard",
       targets: {
         mcp: true,
       },

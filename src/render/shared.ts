@@ -2,9 +2,10 @@ import { basename } from "node:path";
 import { formatJson } from "../utils/json.js";
 import type { Manifest } from "../manifest/schema.js";
 import type { PlannedFile } from "../planner/build-plan.js";
-import { PROMPT_PACKS } from "../planner/output-map.js";
+import { getPromptPacksForType } from "../planner/output-map.js";
 import type { RenderedFile } from "../adapters/types.js";
 import { PROMPT_TEMPLATE_DEFINITIONS } from "./prompt-templates.js";
+import { getPresetById } from "../mcp/presets.js";
 
 function describeProjectType(manifest: Manifest): string {
   if (manifest.project.type === "web-app") return "web app";
@@ -62,6 +63,18 @@ function buildProjectContext(manifest: Manifest): string[] {
       `ORM: ${manifest.apiService.orm}`,
       `Auth: ${manifest.apiService.auth}`,
       `Testing: ${manifest.apiService.testing.join(", ")}`,
+    );
+  }
+
+  if (manifest.project.type === "web-app" && manifest.webApp) {
+    context.push(
+      `Styling: ${manifest.webApp.styling}`,
+      `Components: ${manifest.webApp.components}`,
+      `State management: ${manifest.webApp.stateManagement}`,
+      `Data fetching: ${manifest.webApp.dataFetching}`,
+      `Forms: ${manifest.webApp.forms}`,
+      `Auth: ${manifest.webApp.auth}`,
+      `Testing: ${manifest.webApp.testing.join(", ")}`,
     );
   }
 
@@ -141,7 +154,7 @@ function renderPromptIndex(manifest: Manifest): string {
   const generatedPrompts = [
     "bootstrap.md",
     ...(manifest.generated.prompts === "pack"
-      ? PROMPT_PACKS.map((promptName) => `${promptName}.md`)
+      ? getPromptPacksForType(manifest.project.type).map((promptName) => `${promptName}.md`)
       : []),
   ];
   const modeSummary =
@@ -189,14 +202,21 @@ function renderPromptTemplate(file: PlannedFile, manifest: Manifest): string {
 }
 
 function renderEnvExample(manifest: Manifest): string {
-  const presetLines =
-    manifest.generated.mcpPresets.length === 0
-      ? ["EXAMPLE_API_KEY=replace-me"]
-      : manifest.generated.mcpPresets.map(
-          (preset) => `${preset.toUpperCase().replaceAll(/[^A-Z0-9]+/g, "_")}_TOKEN=replace-me`,
-        );
+  if (manifest.generated.mcpPresets.length === 0) {
+    return "EXAMPLE_API_KEY=replace-me\n";
+  }
 
-  return `${presetLines.join("\n")}\n`;
+  const lines: string[] = [];
+  for (const presetId of manifest.generated.mcpPresets) {
+    const preset = getPresetById(presetId);
+    if (!preset || Object.keys(preset.env).length === 0) continue;
+    for (const [key] of Object.entries(preset.env)) {
+      lines.push(`# ${preset.name} — ${preset.description}`);
+      lines.push(`${key}=`);
+    }
+  }
+
+  return lines.length > 0 ? `${lines.join("\n")}\n` : "# No environment variables required for the selected MCP presets.\n";
 }
 
 function renderLocalManifest(): string {

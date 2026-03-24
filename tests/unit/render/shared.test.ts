@@ -39,6 +39,7 @@ describe("renderSharedFile prompt rendering", () => {
     const manifest = buildRecommendedManifest({
       name: "ops-dashboard",
       framework: "react",
+      projectType: "dashboard",
       generated: {
         prompts: "pack",
       },

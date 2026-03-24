@@ -6,6 +6,8 @@ import {
   type Manifest,
 } from "./schema.js";
 import { isRecord } from "../utils/json.js";
+import { validatePresetIds, VALID_PRESET_IDS } from "../mcp/presets.js";
+import { ManifestValidationError } from "../errors.js";
 
 function mergePlainObjects<T>(base: T, override: unknown): T {
   if (override === undefined) {
@@ -62,5 +64,15 @@ export function normalizeManifest(
       ? mergedShared
       : mergePlainObjects(mergedShared, localOverrideSchema.parse(options.localOverride));
 
-  return manifestSchema.parse(mergedWithLocal);
+  const parsed = manifestSchema.parse(mergedWithLocal);
+
+  const { invalid } = validatePresetIds(parsed.generated.mcpPresets);
+  if (invalid.length > 0) {
+    throw new ManifestValidationError([
+      `Unknown MCP preset IDs: ${invalid.join(", ")}.`,
+      `Valid preset IDs are: ${VALID_PRESET_IDS.join(", ")}.`,
+    ]);
+  }
+
+  return parsed;
 }
