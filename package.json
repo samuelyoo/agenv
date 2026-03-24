@@ -1,6 +1,6 @@
 {
   "name": "agenv-cli",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Generate portable AI workspace configs for any web development project — one manifest for Copilot, Claude, Codex, and MCP.",
   "keywords": [
     "ai",
