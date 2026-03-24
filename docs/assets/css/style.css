@@ -169,12 +169,12 @@ pre {
 .site-nav {
   display: inline-flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
 }
 
 .site-nav a {
   color: var(--muted);
-  font-size: 0.96rem;
+  font-size: 0.92rem;
   text-decoration: none;
 }
 
@@ -186,9 +186,9 @@ pre {
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
-  gap: 26px;
+  gap: 32px;
   align-items: center;
-  padding: 42px 0 30px;
+  padding: 34px 0 26px;
 }
 
 .eyebrow {
@@ -204,22 +204,22 @@ h1,
 h2,
 h3 {
   margin: 0;
-  letter-spacing: -0.06em;
-  line-height: 0.96;
+  letter-spacing: -0.05em;
+  line-height: 1.02;
 }
 
 h1 {
-  max-width: 10ch;
-  font-size: clamp(3.7rem, 7vw, 7rem);
+  max-width: 11ch;
+  font-size: clamp(3rem, 5.6vw, 5.2rem);
 }
 
 h2 {
-  max-width: 14ch;
-  font-size: clamp(2.4rem, 4vw, 4rem);
+  max-width: 15ch;
+  font-size: clamp(2rem, 3.2vw, 3rem);
 }
 
 h3 {
-  font-size: 1.35rem;
+  font-size: 1.18rem;
 }
 
 .lede,
@@ -237,9 +237,17 @@ h3 {
 
 .lede {
   max-width: 58ch;
-  margin: 24px 0 0;
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.hero-support {
+  max-width: 46ch;
+  margin: 18px 0 0;
   color: var(--muted-strong);
-  font-size: 1.06rem;
+  font-size: 1.08rem;
+  line-height: 1.6;
 }
 
 .cta-row,
@@ -414,7 +422,7 @@ h3 {
 }
 
 .artifact-card {
-  min-height: 180px;
+  min-height: 172px;
   padding: 18px;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -424,8 +432,8 @@ h3 {
 .artifact-card h2 {
   max-width: none;
   margin-bottom: 12px;
-  font-size: 1.22rem;
-  line-height: 1.2;
+  font-size: 1.05rem;
+  line-height: 1.28;
 }
 
 .artifact-card p {
@@ -471,7 +479,14 @@ h3 {
 }
 
 .section {
-  padding: 96px 0 0;
+  padding: 84px 0 0;
+}
+
+.section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 34ch);
+  gap: 24px;
+  align-items: end;
 }
 
 .section-copy {
@@ -485,11 +500,19 @@ h3 {
   color: var(--muted);
 }
 
+.section-note,
+.panel-intro {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
 .story-grid {
   display: grid;
   grid-template-columns: 1.1fr 1fr 1fr;
   gap: 18px;
-  margin-top: 30px;
+  margin-top: 28px;
 }
 
 .story-card,
@@ -547,7 +570,7 @@ h3 {
 .flow-panel,
 .launch-panel {
   border-radius: var(--radius-xl);
-  padding: 28px;
+  padding: 30px;
 }
 
 .flow-panel-dark {
@@ -564,7 +587,7 @@ h3 {
 .steps {
   display: grid;
   gap: 18px;
-  margin: 26px 0 0;
+  margin: 22px 0 0;
   padding-left: 1.25rem;
 }
 
@@ -582,7 +605,7 @@ h3 {
   display: grid;
   gap: 16px;
   padding: 0;
-  margin: 24px 0 0;
+  margin: 18px 0 0;
   list-style: none;
 }
 
@@ -597,7 +620,7 @@ h3 {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
-  margin-top: 28px;
+  margin-top: 24px;
 }
 
 .section-cta {
@@ -693,6 +716,11 @@ h3 {
     grid-template-columns: 1fr;
   }
 
+  .section-head {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
   .artifact-row,
   .pill-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -726,12 +754,17 @@ h3 {
 
   h1 {
     max-width: none;
-    font-size: clamp(2.9rem, 12vw, 4.4rem);
+    font-size: clamp(2.55rem, 11vw, 3.8rem);
   }
 
   h2 {
     max-width: none;
-    font-size: clamp(2rem, 9vw, 3rem);
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
+  }
+
+  .hero-support,
+  .lede {
+    max-width: none;
   }
 
   .cta-row,
