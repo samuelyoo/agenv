@@ -414,7 +414,7 @@ h3 {
   overflow-wrap: anywhere;
 }
 
-/* ── Output logo strip ────────────────────────────── */
+/* ── Output logo grid ─────────────────────────────── */
 .output-strip {
   padding: 20px 18px;
   border: 1px solid var(--line);
@@ -422,10 +422,10 @@ h3 {
   background: rgba(255, 255, 255, 0.02);
 }
 
-.logo-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 6px;
+.logo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 
 .logo-item {
@@ -433,9 +433,8 @@ h3 {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  flex: 1;
-  padding: 14px 8px 12px;
-  border-radius: 10px;
+  padding: 16px 8px 14px;
+  border-radius: 12px;
   text-decoration: none;
   color: inherit;
   transition: background 0.2s, transform 0.15s;
@@ -447,9 +446,8 @@ h3 {
 }
 
 .logo-icon {
-  width: 32px;
-  height: 32px;
-  color: var(--accent-strong);
+  width: 36px;
+  height: 36px;
   opacity: 0.85;
   transition: opacity 0.2s;
 }
@@ -459,7 +457,7 @@ h3 {
 }
 
 .logo-label {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   color: #e2e6ef;
@@ -761,12 +759,8 @@ h3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .logo-row {
-    flex-wrap: wrap;
-  }
-
-  .logo-item {
-    flex: 0 0 calc(33.33% - 4px);
+  .logo-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .story-grid {
@@ -837,12 +831,8 @@ h3 {
     grid-template-columns: 1fr;
   }
 
-  .logo-row {
-    flex-wrap: wrap;
-  }
-
-  .logo-item {
-    flex: 0 0 calc(33.33% - 4px);
+  .logo-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .floating-note {
