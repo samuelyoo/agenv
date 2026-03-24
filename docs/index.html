@@ -7,16 +7,15 @@ description: Bootstrap a portable, reviewable AI workspace for web repositories 
 <section class="hero" id="top">
   <div class="hero-copy">
     <p class="eyebrow">Open source AI workspace infrastructure</p>
-    <h1>Calm, reviewable AI setup for every repo.</h1>
+    <h1>Define your AI workspace once.</h1>
     <p class="hero-support">
-      One manifest gives your team a cleaner way to manage Codex, Copilot,
-      Claude, and MCP configuration without scattering intent across files.
+      agenv gives teams one calm, reviewable place to manage Codex, Copilot,
+      Claude, and MCP setup.
     </p>
     <p class="lede">
-      <strong>agenv</strong> gives your project one reviewable source of truth
-      for Codex, Copilot, Claude, and MCP tooling. Scan the repo, create
-      <code>ai-workspace.json</code>, and generate the instructions and config
-      files your team actually needs.
+      Scan the repo, create <code>ai-workspace.json</code>, and generate the
+      instruction files and tool config your project actually needs, without
+      hand-maintaining the same intent in four different places.
     </p>
 
     <div class="cta-row">
@@ -105,6 +104,46 @@ $ agenv generate</code></pre>
   </div>
 </section>
 
+<section class="section section-compact" id="overview">
+  <div class="section-head">
+    <div class="section-copy">
+      <p class="eyebrow">What you get</p>
+      <h2>A simpler shape for AI setup.</h2>
+    </div>
+    <p class="section-note">
+      The goal is not more automation noise. It is less repeated setup, clearer
+      ownership, and safer updates across tools.
+    </p>
+  </div>
+
+  <div class="overview-grid">
+    <article class="overview-card">
+      <p class="card-index">01</p>
+      <h3>One manifest</h3>
+      <p>
+        <code>ai-workspace.json</code> becomes the source of truth for how the
+        repo wants AI tooling to behave.
+      </p>
+    </article>
+    <article class="overview-card">
+      <p class="card-index">02</p>
+      <h3>Generated outputs</h3>
+      <p>
+        Create <code>AGENTS.md</code>, Copilot instructions, Claude files, and
+        MCP config from one plan.
+      </p>
+    </article>
+    <article class="overview-card">
+      <p class="card-index">03</p>
+      <h3>Safer maintenance</h3>
+      <p>
+        Use diffs, generated headers, and explicit overwrite behavior so updates
+        stay reviewable.
+      </p>
+    </article>
+  </div>
+</section>
+
 <section class="signal-rail" aria-label="Supported tooling">
   <div class="signal-track">
     <span>Codex</span>
@@ -125,28 +164,21 @@ $ agenv generate</code></pre>
 <section class="section" id="story">
   <div class="section-head">
     <div class="section-copy">
-      <p class="eyebrow">Why this gets passed around</p>
-      <h2>It fixes a pain every AI-heavy codebase eventually feels.</h2>
+      <p class="eyebrow">Why it is useful</p>
+      <h2>
+        Most repos do not need more AI files. They need fewer decisions to
+        repeat.
+      </h2>
     </div>
     <p class="section-note">
-      The pitch stays easy to repeat: define the workspace once, keep it
-      reviewable, and regenerate the pieces each tool expects.
+      agenv is for the moment a team realizes its prompts, instructions, and
+      tool config are drifting apart faster than anyone wants to maintain them.
     </p>
   </div>
 
-  <div class="story-grid">
-    <article class="story-card story-card-quote">
-      <p class="quote-mark">"</p>
-      <h3>One file decides how your AI tooling behaves.</h3>
-      <p>
-        No more drifting prompts and one-off config edits scattered across the
-        repo.
-      </p>
-    </article>
-
+  <div class="story-grid story-grid-simple">
     <article class="story-card">
-      <p class="card-index">01</p>
-      <h3>Scan first, then generate</h3>
+      <h3>Scan the repo before making choices</h3>
       <p>
         agenv inspects the repo, detects the stack, and starts from the codebase
         you already have.
@@ -154,20 +186,18 @@ $ agenv generate</code></pre>
     </article>
 
     <article class="story-card">
-      <p class="card-index">02</p>
-      <h3>Review changes like code</h3>
+      <h3>Keep tooling aligned</h3>
       <p>
-        <code>agenv diff</code> and generated headers keep the workflow safe for
-        real teams.
+        Codex, Copilot, Claude, and MCP outputs come from one system instead of
+        separate rituals.
       </p>
     </article>
 
     <article class="story-card">
-      <p class="card-index">03</p>
-      <h3>Carry the setup across tools</h3>
+      <h3>Review setup like product code</h3>
       <p>
-        Codex, Copilot, Claude, and MCP outputs come from one system instead of
-        four separate rituals.
+        <code>agenv diff</code> and generated headers make changes easier to
+        reason about in pull requests.
       </p>
     </article>
   </div>
@@ -176,10 +206,10 @@ $ agenv generate</code></pre>
 <section class="section section-split" id="flow">
   <div class="flow-panel">
     <p class="eyebrow">How it works</p>
-    <h2>Fast enough for solo builders, structured enough for teams.</h2>
+    <h2>Small command surface. Predictable workflow.</h2>
     <p class="panel-intro">
-      The workflow stays intentionally small so it feels maintainable after the
-      first setup, not just during a launch.
+      The workflow stays intentionally small so it remains readable after the
+      first setup, not just during the first demo.
     </p>
     <ol class="steps">
       <li>
@@ -223,12 +253,56 @@ $ agenv generate</code></pre>
 <section class="section section-stack">
   <div class="section-head">
     <div class="section-copy">
-      <p class="eyebrow">Built for open source</p>
-      <h2>Not another AI wrapper. Infrastructure your repo can keep.</h2>
+      <p class="eyebrow">Generated outputs</p>
+      <h2>The files map cleanly to the tools your team already uses.</h2>
     </div>
     <p class="section-note">
-      The value is less about novelty and more about reducing maintenance load
-      as AI tooling changes around the repo.
+      Instead of describing every feature abstractly, agenv turns the manifest
+      into concrete files people can open, diff, and ship.
+    </p>
+  </div>
+
+  <div class="output-grid">
+    <article class="pill-card">
+      <h3>AGENTS.md for Codex</h3>
+      <p>
+        Project-specific guidance that stays in sync with the manifest instead
+        of drifting over time.
+      </p>
+    </article>
+    <article class="pill-card">
+      <h3>Copilot instructions</h3>
+      <p>
+        Repo-level guidance generated from the same workspace decisions used
+        everywhere else.
+      </p>
+    </article>
+    <article class="pill-card">
+      <h3>Claude workspace files</h3>
+      <p>
+        Shared Claude setup can be generated without treating it like an
+        unrelated sidecar system.
+      </p>
+    </article>
+    <article class="pill-card">
+      <h3>MCP configuration</h3>
+      <p>
+        Reviewable server presets and placeholders fit into the same workflow as
+        the rest of the repo.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="section section-stack">
+  <div class="section-head">
+    <div class="section-copy">
+      <p class="eyebrow">Built for open source</p>
+      <h2>Infrastructure your repo can keep living with.</h2>
+    </div>
+    <p class="section-note">
+      The value is not novelty. It is lowering the maintenance cost of AI setup
+      as tools change around the repository.
     </p>
   </div>
 

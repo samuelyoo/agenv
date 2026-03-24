@@ -210,16 +210,16 @@ h3 {
 
 h1 {
   max-width: 11ch;
-  font-size: clamp(3rem, 5.6vw, 5.2rem);
+  font-size: clamp(2.5rem, 4.6vw, 4.2rem);
 }
 
 h2 {
   max-width: 15ch;
-  font-size: clamp(2rem, 3.2vw, 3rem);
+  font-size: clamp(1.7rem, 2.3vw, 2.4rem);
 }
 
 h3 {
-  font-size: 1.18rem;
+  font-size: 1.05rem;
 }
 
 .lede,
@@ -237,17 +237,17 @@ h3 {
 
 .lede {
   max-width: 58ch;
-  margin: 18px 0 0;
+  margin: 14px 0 0;
   color: var(--muted);
-  font-size: 1rem;
+  font-size: 0.98rem;
 }
 
 .hero-support {
   max-width: 46ch;
-  margin: 18px 0 0;
+  margin: 16px 0 0;
   color: var(--muted-strong);
-  font-size: 1.08rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.68;
 }
 
 .cta-row,
@@ -267,11 +267,11 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 54px;
-  padding: 0 24px;
+  min-height: 50px;
+  padding: 0 20px;
   border: 1px solid transparent;
   border-radius: 999px;
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
   cursor: pointer;
   transition:
@@ -303,12 +303,12 @@ h3 {
 }
 
 .meta-strip span {
-  padding: 11px 16px;
+  padding: 10px 14px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
 }
 
 .meta-strip strong {
@@ -343,7 +343,7 @@ h3 {
   padding: 12px 16px;
   border-radius: 999px;
   color: var(--muted-strong);
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   backdrop-filter: blur(16px);
 }
 
@@ -409,8 +409,8 @@ h3 {
 .console-block pre {
   margin: 0;
   color: #dbe3fa;
-  font-size: 0.95rem;
-  line-height: 1.75;
+  font-size: 0.9rem;
+  line-height: 1.7;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -456,7 +456,7 @@ h3 {
   padding: 16px 0;
   color: var(--muted);
   font-family: var(--font-mono);
-  font-size: 0.88rem;
+  font-size: 0.8rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   animation: marquee 28s linear infinite;
@@ -482,6 +482,10 @@ h3 {
   padding: 84px 0 0;
 }
 
+.section-compact {
+  padding-top: 40px;
+}
+
 .section-head {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 34ch);
@@ -500,46 +504,42 @@ h3 {
   color: var(--muted);
 }
 
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
 .section-note,
 .panel-intro {
   margin: 0;
   color: var(--muted);
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   line-height: 1.7;
 }
 
 .story-grid {
   display: grid;
-  grid-template-columns: 1.1fr 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
   margin-top: 28px;
 }
 
+.overview-card,
 .story-card,
 .pill-card {
   border-radius: var(--radius-xl);
-  padding: 24px;
+  padding: 22px;
 }
 
-.story-card-quote {
-  grid-row: span 2;
-  background:
-    radial-gradient(
-      circle at top left,
-      rgba(255, 139, 61, 0.22),
-      transparent 44%
-    ),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 32%),
-    var(--panel-strong);
+.overview-card {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.025);
+  box-shadow: var(--shadow);
 }
 
-.quote-mark {
-  margin: 0 0 12px;
-  color: var(--accent-strong);
-  font-size: 4rem;
-  line-height: 0.7;
-}
-
+.overview-card p:last-child,
 .story-card p:last-child,
 .pill-card p {
   margin-bottom: 0;
@@ -594,6 +594,7 @@ h3 {
 .steps li,
 .command-list li {
   color: var(--muted);
+  font-size: 0.95rem;
 }
 
 .steps strong,
@@ -616,6 +617,7 @@ h3 {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.output-grid,
 .pill-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -721,18 +723,15 @@ h3 {
     align-items: start;
   }
 
+  .overview-grid,
   .artifact-row,
+  .output-grid,
   .pill-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .story-grid {
     grid-template-columns: 1fr 1fr;
-  }
-
-  .story-card-quote {
-    grid-row: auto;
-    grid-column: 1 / -1;
   }
 }
 
@@ -754,17 +753,27 @@ h3 {
 
   h1 {
     max-width: none;
-    font-size: clamp(2.55rem, 11vw, 3.8rem);
+    font-size: clamp(2.1rem, 10vw, 3rem);
   }
 
   h2 {
     max-width: none;
-    font-size: clamp(1.8rem, 8vw, 2.5rem);
+    font-size: clamp(1.45rem, 7vw, 2rem);
   }
 
   .hero-support,
   .lede {
     max-width: none;
+  }
+
+  .hero-support {
+    font-size: 0.95rem;
+  }
+
+  .lede,
+  .section-note,
+  .panel-intro {
+    font-size: 0.92rem;
   }
 
   .cta-row,
@@ -782,8 +791,10 @@ h3 {
     width: 100%;
   }
 
+  .overview-grid,
   .artifact-row,
   .story-grid,
+  .output-grid,
   .pill-grid {
     grid-template-columns: 1fr;
   }
