@@ -79,23 +79,40 @@ $ agenv generate</code></pre>
 }</code></pre>
         </div>
 
-        <div class="artifact-row">
-          <article class="artifact-card" data-tip="Codex guidance without hand-maintaining repo prompts forever.">
-            <p class="artifact-kicker">Generated</p>
-            <h2>AGENTS.md</h2>
-          </article>
-          <article class="artifact-card" data-tip="Copilot instructions stay aligned with the rest of your AI stack.">
-            <p class="artifact-kicker">Generated</p>
-            <h2>copilot-instructions.md</h2>
-          </article>
-          <article class="artifact-card" data-tip="Shared defaults, better reviewability, less config drift.">
-            <p class="artifact-kicker">Generated</p>
-            <h2>.claude &amp; .mcp.json</h2>
-          </article>
-          <article class="artifact-card" data-tip="Cursor and Windsurf rule files from the same manifest.">
-            <p class="artifact-kicker">Generated</p>
-            <h2>.cursor/rules &amp; .windsurf/rules</h2>
-          </article>
+        <div class="output-strip">
+          <p class="block-label">generated outputs</p>
+          <div class="logo-row">
+            <a class="logo-item" href="https://github.com/features/copilot" target="_blank" rel="noopener">
+              <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+              <span class="logo-label">Codex</span>
+              <span class="logo-file">AGENTS.md</span>
+            </a>
+            <a class="logo-item" href="https://github.com/features/copilot" target="_blank" rel="noopener">
+              <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 1.5a8.5 8.5 0 1 1 0 17 8.5 8.5 0 0 1 0-17zM8.5 9a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM7.5 14.25a.75.75 0 0 0-.648 1.128A5.5 5.5 0 0 0 12 18a5.5 5.5 0 0 0 5.148-2.622.75.75 0 1 0-1.296-.756A4 4 0 0 1 12 16.5a4 4 0 0 1-3.852-1.878.75.75 0 0 0-.648-.372z"/></svg>
+              <span class="logo-label">Copilot</span>
+              <span class="logo-file">copilot-instructions.md</span>
+            </a>
+            <a class="logo-item" href="https://claude.ai" target="_blank" rel="noopener">
+              <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L19.2 8 12 11.82 4.8 8 12 4.18zM4 9.44l7 3.5V19.5l-7-3.5V9.44zm16 0v6.56l-7 3.5v-6.56l7-3.5z"/></svg>
+              <span class="logo-label">Claude</span>
+              <span class="logo-file">.claude &amp; .mcp.json</span>
+            </a>
+            <a class="logo-item" href="https://cursor.com" target="_blank" rel="noopener">
+              <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v2H8V8zm0 4h8v2H8v-2z"/></svg>
+              <span class="logo-label">Cursor</span>
+              <span class="logo-file">.cursor/rules</span>
+            </a>
+            <a class="logo-item" href="https://windsurf.com" target="_blank" rel="noopener">
+              <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25C3 17.25 6 3 12 3s9 14.25 9 14.25S17.25 21 12 21 3 17.25 3 17.25zM12 5c-3.75 0-6.375 8.25-7.125 11.25C6.375 17.625 9 18.75 12 18.75s5.625-1.125 7.125-2.5C18.375 13.25 15.75 5 12 5z"/></svg>
+              <span class="logo-label">Windsurf</span>
+              <span class="logo-file">.windsurf/rules</span>
+            </a>
+            <a class="logo-item" href="https://modelcontextprotocol.io" target="_blank" rel="noopener">
+              <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a3 3 0 0 0-3 3v2H7a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3h2v2a3 3 0 0 0 6 0v-2h2a3 3 0 0 0 3-3v-4a3 3 0 0 0-3-3h-2V5a3 3 0 0 0-3-3zm-1 3a1 1 0 1 1 2 0v3h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v3a1 1 0 1 1-2 0v-3H7a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h4V5z"/></svg>
+              <span class="logo-label">MCP</span>
+              <span class="logo-file">.mcp.json</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>
