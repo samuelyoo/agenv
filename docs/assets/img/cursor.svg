@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e2e6ef"><path d="M4 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4Zm7.2 3.6L7.6 12l3.6 4.4-1.6 1.2L4.8 12l4.8-5.6 1.6 1.2Zm1.6-1.2L17.6 12l-4.8 5.6-1.6-1.2 3.6-4.4-3.6-4.4 1.6-1.2Z"/></svg>
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="20" fill="black"/>
+  <path d="M50 25L80 40L50 55L20 40L50 25Z" fill="white"/>
+  <path d="M50 55L80 40V70L50 85V55Z" fill="#D1D5DB"/>
+  <path d="M50 55L20 40V70L50 85V55Z" fill="#9CA3AF"/>
+</svg>
