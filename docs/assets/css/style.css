@@ -176,11 +176,13 @@ pre {
   color: var(--muted);
   font-size: 0.92rem;
   text-decoration: none;
+  transition: color 0.2s;
 }
 
 .site-nav a:hover,
 .site-nav a:focus-visible {
   color: var(--text);
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
 }
 
 .hero {
@@ -291,10 +293,22 @@ h3 {
   box-shadow: 0 18px 38px rgba(255, 139, 61, 0.26);
 }
 
+.button-primary:hover,
+.button-primary:focus-visible {
+  box-shadow: 0 22px 42px rgba(255, 139, 61, 0.4);
+  filter: brightness(1.05);
+}
+
 .button-secondary {
   color: var(--text);
   background: rgba(255, 255, 255, 0.04);
   border-color: var(--line-strong);
+}
+
+.button-secondary:hover,
+.button-secondary:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .meta-strip {
@@ -344,6 +358,18 @@ h3 {
   color: var(--muted-strong);
   font-size: 0.86rem;
   backdrop-filter: blur(16px);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.floating-note:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(124, 231, 208, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(124, 231, 208, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(124, 231, 208, 0); }
 }
 
 .status-dot {
@@ -352,6 +378,7 @@ h3 {
   border-radius: 50%;
   background: var(--accent-cool);
   box-shadow: 0 0 0 8px rgba(124, 231, 208, 0.1);
+  animation: pulse 2s infinite;
 }
 
 .hero-console {
@@ -389,10 +416,47 @@ h3 {
 }
 
 .console-block {
+  position: relative;
   padding: 20px;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.02);
+  transition: border-color 0.2s;
+}
+
+.console-block:hover {
+  border-color: var(--line-strong);
+}
+
+.code-copy-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-soft);
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.console-block:hover .code-copy-btn,
+.code-copy-btn:focus-visible {
+  opacity: 1;
+}
+
+.code-copy-btn:hover,
+.code-copy-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  border-color: var(--line-strong);
 }
 
 .block-label,
@@ -437,23 +501,29 @@ h3 {
   border-radius: 12px;
   text-decoration: none;
   color: inherit;
-  transition: background 0.2s, transform 0.15s;
+  transition: background 0.2s, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
 }
 
-.logo-item:hover {
-  background: rgba(99, 102, 241, 0.08);
-  transform: translateY(-2px);
+.logo-item:hover,
+.logo-item:focus-visible {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .logo-icon {
   width: 36px;
   height: 36px;
-  opacity: 0.85;
-  transition: opacity 0.2s;
+  opacity: 0.7;
+  filter: drop-shadow(0 0 0 transparent);
+  transition: opacity 0.2s, filter 0.2s, transform 0.2s;
 }
 
-.logo-item:hover .logo-icon {
+.logo-item:hover .logo-icon,
+.logo-item:focus-visible .logo-icon {
   opacity: 1;
+  transform: scale(1.05);
+  filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.15));
 }
 
 .logo-label {
@@ -506,6 +576,24 @@ h3 {
   to {
     transform: translateX(-50%);
   }
+}
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  will-change: opacity, transform;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Base focus outline and accessibility */
+:focus-visible {
+  outline: 2px solid var(--accent-cool);
+  outline-offset: 4px;
 }
 
 .section {
@@ -561,6 +649,15 @@ h3 {
 .pill-card {
   border-radius: var(--radius-xl);
   padding: 22px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.3s;
+}
+
+.overview-card:hover,
+.story-card:hover,
+.pill-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--line-strong);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.4);
 }
 
 .overview-card {
