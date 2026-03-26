@@ -69,8 +69,8 @@ Generated files include a header comment so agenv knows which files it manages. 
 | `copilot` | `.github/copilot-instructions.md` |
 | `claude` | `.claude/README.md`, `.claude/skills/*.md`, `.claude/agents/*.md`, `.claude/settings.local.json` |
 | `mcp` | `.mcp.json`, `.mcp.local.json` |
-| `cursor` | `.cursor/rules/context.mdc`, `.cursor/rules/coding-style.mdc`, `.cursor/rules/review.mdc` |
-| `windsurf` | `.windsurf/rules/context.md`, `.windsurf/rules/coding-style.md`, `.windsurf/rules/review.md` |
+| `cursor` | `.cursor/rules/context.mdc`, `.cursor/rules/coding-style.mdc`, `.cursor/rules/framework.mdc`, `.cursor/rules/code-review.mdc` |
+| `windsurf` | `.windsurf/rules/context.md`, `.windsurf/rules/coding-style.md`, `.windsurf/rules/framework.md`, `.windsurf/rules/code-review.md` |
 
 ## Project Types
 
@@ -96,11 +96,11 @@ Select presets during `agenv init` or add them to `generated.mcpPresets` in your
 |---|---|
 | [Getting Started](doc/getting-started.md) | Contributor onboarding |
 | [Product Requirements](doc/prd.md) | Product goals and scope |
-| [Technical Requirements](doc/trd.md) | Architecture and technical design |
+| [Technical Requirements](doc/internal/trd.md) | Architecture and technical design |
 | [CLI Spec](doc/cli-spec.md) | Command contract and flag reference |
 | [Manifest Spec](doc/manifest-spec.md) | Manifest schema and field definitions |
 | [Output Map](doc/output-map.md) | Which files are generated and when |
-| [Adapter Contract](doc/adapter-contract.md) | How adapters work |
+| [Adapter Contract](doc/internal/adapter-contract.md) | How adapters work |
 
 ## Contributing
 
@@ -115,7 +115,6 @@ npm install
 npm run build
 npm test
 npm run typecheck
-npm run build
 ```
 
 ## License

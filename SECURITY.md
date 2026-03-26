@@ -4,15 +4,16 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.x     | :white_check_mark: |
+| 2.x     | :white_check_mark: |
+| 1.x     | :x:                |
 
 ## Reporting a Vulnerability
 
 If you discover a security vulnerability in this project, please report it **privately** rather than opening a public issue.
 
-**Preferred method:** Open a [GitHub Security Advisory](https://github.com/syoo/agenv-package/security/advisories/new) using the "Report a vulnerability" button on this repository's Security tab.
+**Preferred method:** Open a [GitHub Security Advisory](https://github.com/samuelyoo/agenv/security/advisories/new) using the "Report a vulnerability" button on this repository's Security tab.
 
-**Alternatively:** Send an email describing the issue. Include:
+Please include:
 - A description of the vulnerability and its potential impact
 - Steps to reproduce or a proof-of-concept (if possible)
 - Any suggested mitigations

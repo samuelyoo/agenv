@@ -14,7 +14,7 @@ It is more explanation-friendly than the PRD, TRD, and contract docs.
 
 `agenv` is a CLI package that helps a team define one shared AI workspace intent and turn that into tool-specific outputs.
 
-The package currently supports both `dashboard` and `web-app` project types, though it is still more mature on the dashboard side today.
+The package currently supports seven project types: `dashboard`, `web-app`, `api-service`, `full-stack`, `library`, `cli-tool`, and `mobile`.
 
 It focuses on these target outputs:
 
@@ -22,6 +22,8 @@ It focuses on these target outputs:
 - GitHub Copilot repo instructions
 - Claude workspace files
 - MCP config and placeholder env wiring
+- Cursor rules via `.cursor/rules/`
+- Windsurf rules via `.windsurf/rules/`
 
 The main idea is simple:
 
@@ -37,24 +39,29 @@ This is already a working codebase, not just a planning repo.
 Current working pieces:
 
 - TypeScript package scaffold
-- CLI entrypoint
+- CLI entrypoint with structured error handling
 - manifest schema, defaults, normalization, load, and save
-- repo detection for common dashboard stack hints
+- repo detection and framework detection
 - output planning and warning generation
-- a first real `generate` path that writes files
-- a `diff` path that compares rendered output to the filesystem
-- unit and integration tests
+- `generate` command that writes files with backup support
+- `diff` command that compares rendered output to the filesystem
+- six target adapters (codex, copilot, claude, mcp, cursor, windsurf)
+- seven project types with type-specific defaults
+- 11 MCP presets with trust annotations
+- template registry with recommended and semi-custom variants
+- structured error types and backup system
+- 132+ passing unit and integration tests
 
 ## 4. What Is Still Early
 
 These areas are still intentionally shallow or incomplete:
 
-- the interactive `init` wizard
-- richer generated content for all targets
-- more complete Claude and MCP output quality
-- broader `doctor` coverage
+- exemplar output repos demonstrating real-world usage
+- deeper MCP preset customization
+- broader integration testing across all project types
+- full template pack mode coverage
 
-That means contributors should treat the repo as an early working CLI with a clear architecture, not as a finished product.
+That means contributors should treat the repo as a working CLI with a clear architecture that is actively improving.
 
 ## 5. How the Codebase Is Organized
 
@@ -156,22 +163,22 @@ Use the docs based on the question you are trying to answer.
 
 For product intent:
 
-- [prd.md](/Users/syoo/Documents/code/agenv-package/doc/prd.md)
+- [prd.md](prd.md)
 
 For architecture and module structure:
 
-- [trd.md](/Users/syoo/Documents/code/agenv-package/doc/trd.md)
+- [trd.md](internal/trd.md)
 
 For exact contracts:
 
-- [cli-spec.md](/Users/syoo/Documents/code/agenv-package/doc/cli-spec.md)
-- [manifest-spec.md](/Users/syoo/Documents/code/agenv-package/doc/manifest-spec.md)
-- [output-map.md](/Users/syoo/Documents/code/agenv-package/doc/output-map.md)
-- [adapter-contract.md](/Users/syoo/Documents/code/agenv-package/doc/adapter-contract.md)
+- [cli-spec.md](cli-spec.md)
+- [manifest-spec.md](manifest-spec.md)
+- [output-map.md](output-map.md)
+- [adapter-contract.md](internal/adapter-contract.md)
 
 For the current work queue:
 
-- [implementation-plan.md](/Users/syoo/Documents/code/agenv-package/doc/implementation-plan.md)
+- [implementation-plan.md](internal/implementation-plan.md)
 
 ## 8. Good First Contributions
 

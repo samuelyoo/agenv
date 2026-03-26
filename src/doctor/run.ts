@@ -1,3 +1,4 @@
+import { ADAPTERS } from "../adapters/index.js";
 import { inspectRepo } from "../detect/repo-inspector.js";
 import { loadManifest } from "../manifest/load.js";
 import type { Manifest } from "../manifest/schema.js";
@@ -43,15 +44,28 @@ export async function runDoctor(
     manifestLoadError = error;
   }
 
+  // Determine which adapter targets are actually enabled
+  const supportedTargets = new Set<string>();
+  if (manifest) {
+    for (const adapter of ADAPTERS) {
+      const result = adapter.supports(manifest);
+      if (result.supported) {
+        supportedTargets.add(adapter.id);
+      }
+    }
+  }
+
   const findings = [
+    // Universal checks (always run)
     ...runManifestChecks(manifest, manifestLoadError),
     ...runCompatibilityChecks(manifest, inspection),
     ...runSecurityChecks(manifest),
     ...runEnvChecks(manifest),
     ...(await runPathChecks(cwd, manifest)),
     ...runRepoMatchChecks(manifest, inspection),
-    ...checkMcpEnvVars(manifest),
-    ...(await checkMcpConfigFormat(cwd, manifest)),
+    // MCP-specific checks (only when MCP is enabled)
+    ...(supportedTargets.has("mcp") ? checkMcpEnvVars(manifest) : []),
+    ...(supportedTargets.has("mcp") ? await checkMcpConfigFormat(cwd, manifest) : []),
   ];
 
   const result = partitionFindings(findings);

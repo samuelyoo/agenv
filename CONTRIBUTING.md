@@ -85,6 +85,21 @@ Use structured error types from `src/errors.ts` for user-facing errors:
 
 These ensure the CLI renders friendly messages with error codes.
 
+## Release Checklist
+
+Before publishing a new version:
+
+1. **Version bump** — Update `version` in `package.json` (this is the single source of truth; the CLI reads it at runtime)
+2. **Changelog** — Move items from `[Unreleased]` to a new versioned section in `CHANGELOG.md`
+3. **Build** — `npm run build` passes cleanly
+4. **Tests** — `npm test` passes (all tests green)
+5. **Types** — `npm run typecheck` passes
+6. **CLI version** — `node dist/cli/index.js --version` prints the new version
+7. **Security** — `SECURITY.md` supported versions table is up to date
+8. **Docs links** — No broken or absolute local paths (`grep -r "/Users/" doc/` returns nothing)
+9. **Dry run** — `npm publish --dry-run` shows correct package name, version, and included files
+10. **Tag** — `git tag vX.Y.Z && git push --tags`
+
 ## Questions?
 
 Open an issue at https://github.com/samuelyoo/agenv/issues.

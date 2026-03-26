@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const frameworkSchema = z.enum(["react", "nextjs", "vite-react", "express", "fastify", "hono"]);
+export const frameworkSchema = z.enum(["react", "nextjs", "vite-react", "express", "fastify", "hono", "koa"]);
 export const projectTypeSchema = z.enum(["dashboard", "web-app", "api-service", "full-stack", "library", "cli-tool", "mobile"]);
 export const setupDepthSchema = z.enum(["recommended", "semi-custom", "advanced"]);
 export const setupModeSchema = z.enum(["base", "skills", "agents", "full"]);

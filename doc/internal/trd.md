@@ -4,7 +4,7 @@
 
 This Technical Requirements Document defines how to build `agenv`, an npm package that bootstraps a portable, reviewable AI workspace for dashboard development repositories.
 
-This document is based on the product requirements in [prd.md](prd.md).
+This document is based on the product requirements in [prd.md](../prd.md).
 
 ## 2. Product Goal
 

@@ -86,6 +86,24 @@ These files are not owned by a single adapter, but are part of the overall plan.
 | `.mcp.json` | `base` | `shared` | `targets.mcp = true` and config is share-safe | Repo MCP config with env placeholders |
 | `.mcp.local.json` | `base` | `local` | `targets.mcp = true` and local-only server config is required | Local MCP override config |
 
+### Cursor
+
+| Path | Layer | Scope | Condition | Notes |
+| --- | --- | --- | --- | --- |
+| `.cursor/rules/context.mdc` | `base` | `shared` | `targets.cursor = true` | Cursor project context rule |
+| `.cursor/rules/coding-style.mdc` | `base` | `shared` | `targets.cursor = true` | Cursor coding style rule |
+| `.cursor/rules/framework.mdc` | `base` | `shared` | `targets.cursor = true` | Cursor framework-specific rule |
+| `.cursor/rules/code-review.mdc` | `base` | `shared` | `targets.cursor = true` | Cursor code review rule |
+
+### Windsurf
+
+| Path | Layer | Scope | Condition | Notes |
+| --- | --- | --- | --- | --- |
+| `.windsurf/rules/context.md` | `base` | `shared` | `targets.windsurf = true` | Windsurf project context rule |
+| `.windsurf/rules/coding-style.md` | `base` | `shared` | `targets.windsurf = true` | Windsurf coding style rule |
+| `.windsurf/rules/framework.md` | `base` | `shared` | `targets.windsurf = true` | Windsurf framework-specific rule |
+| `.windsurf/rules/code-review.md` | `base` | `shared` | `targets.windsurf = true` | Windsurf code review rule |
+
 ## 6. Prompt-pack outputs
 
 Prompt outputs are shared by default because they are documentation artifacts, not secrets.

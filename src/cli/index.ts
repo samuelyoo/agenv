@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { createRequire } from "node:module";
 import { Command } from "commander";
 import { isAgenvError } from "../errors.js";
 import { registerDiffCommand } from "./commands/diff.js";
@@ -9,6 +10,9 @@ import { registerInitCommand } from "./commands/init.js";
 import { registerTemplatesListCommand } from "./commands/templates-list.js";
 
 export function createCli(): Command {
+  const require = createRequire(import.meta.url);
+  const pkg = require("../../package.json") as { version: string };
+
   const program = new Command();
 
   program
@@ -16,7 +20,7 @@ export function createCli(): Command {
     .description(
       "Bootstrap a portable, reviewable AI workspace for web development repositories.",
     )
-    .version("1.0.0");
+    .version(pkg.version);
 
   registerInitCommand(program);
   registerGenerateCommand(program);

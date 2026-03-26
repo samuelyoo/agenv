@@ -1,4 +1,7 @@
 import { Command } from "commander";
+import { watch } from "node:fs";
+import { access } from "node:fs/promises";
+import { join } from "node:path";
 import { summarizeRenderedDiff } from "../../fs/diff.js";
 import { writeRenderedFiles } from "../../fs/write.js";
 import { loadManifest } from "../../manifest/load.js";
@@ -11,6 +14,7 @@ type GenerateOptions = {
   dryRun?: boolean;
   json?: boolean;
   force?: boolean;
+  watch?: boolean;
   targets?: string;
   layer?: string;
   scope?: string;
@@ -85,6 +89,7 @@ export function registerGenerateCommand(program: Command): void {
     .option("--dry-run", "plan without writing files")
     .option("--json", "emit machine-readable output")
     .option("--force", "overwrite files modified outside agenv")
+    .option("--watch", "watch manifest for changes and regenerate")
     .option("--targets <list>", "limit generation to selected targets")
     .option("--layer <list>", "limit generation to selected layers")
     .option("--scope <list>", "limit generation to shared or local scope")
@@ -138,5 +143,67 @@ export function registerGenerateCommand(program: Command): void {
       const text = formatTextBlock(lines);
 
       process.stdout.write(formatCommandOutput(text, result, Boolean(options.json)));
+
+      if (options.watch) {
+        const cwd = process.cwd();
+        const manifestCandidates = [
+          "ai-workspace.json",
+          "ai-workspace.yaml",
+          "ai-workspace.yml",
+          "ai-workspace.local.json",
+          "ai-workspace.local.yaml",
+          "ai-workspace.local.yml",
+        ];
+
+        const watchPaths: string[] = [];
+        for (const candidate of manifestCandidates) {
+          const fullPath = join(cwd, candidate);
+          try {
+            await access(fullPath);
+            watchPaths.push(fullPath);
+          } catch {
+            // file doesn't exist, skip
+          }
+        }
+
+        if (watchPaths.length === 0) {
+          process.stderr.write("No manifest files found to watch.\n");
+          return;
+        }
+
+        process.stdout.write(`\nWatching ${watchPaths.length} manifest file(s) for changes...\n\n`);
+
+        let debounceTimer: ReturnType<typeof setTimeout> | undefined;
+
+        for (const watchPath of watchPaths) {
+          watch(watchPath, () => {
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+              try {
+                process.stdout.write(
+                  `\n[${new Date().toLocaleTimeString()}] Manifest changed, regenerating...\n`,
+                );
+                const watchResult = await runGenerate({
+                  cwd,
+                  force: Boolean(options.force),
+                  ...compactObject({
+                    targets: parseTargets(options.targets),
+                    layers: parseLayers(options.layer),
+                    scopes: parseScopes(options.scope),
+                  }),
+                });
+                process.stdout.write(`Generated ${watchResult.plan.files.length} files.\n`);
+              } catch (error) {
+                process.stderr.write(
+                  `Regeneration failed: ${error instanceof Error ? error.message : String(error)}\n`,
+                );
+              }
+            }, 300);
+          });
+        }
+
+        // Keep process alive
+        process.stdin.resume();
+      }
     });
 }

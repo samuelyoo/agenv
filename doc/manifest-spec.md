@@ -8,7 +8,7 @@ This document defines the canonical `ai-workspace.json` contract for `agenv`. It
 
 ### Shared manifest
 
-- Filename: `ai-workspace.json`
+- Filename: `ai-workspace.json` (also accepted: `ai-workspace.yaml`, `ai-workspace.yml`)
 - Commit status: shared and intended for version control
 - Purpose: repository-level AI workspace intent
 
@@ -235,17 +235,38 @@ Normalization must not reorder user-authored arrays unless the schema defines th
 
 The local override contract is defined now so planners and loaders can rely on stable semantics.
 
+### File format
+
+The local override file may be provided in any of these formats (checked in order):
+
+1. `ai-workspace.local.json`
+2. `ai-workspace.local.yaml`
+3. `ai-workspace.local.yml`
+
+Only the first file found is used. The file should be `.gitignore`d for local-only config.
+
 ### Allowed override areas
 
-`ai-workspace.local.json` may override:
+`ai-workspace.local.json` (or `.yaml`/`.yml`) may override:
 
 - `setup.scope`
 - `targets.mcp`
+- `targets.cursor`
+- `targets.windsurf`
 - `generated.prompts`
 - `generated.mcpPresets`
 - `extensions`
 
 It may also extend future local-only settings if they are explicitly documented.
+
+### Example
+
+```json
+{
+  "targets": { "mcp": false, "cursor": true },
+  "generated": { "mcpPresets": [] }
+}
+```
 
 ### Prohibited override areas
 
@@ -357,5 +378,4 @@ This specification does not require:
 
 - arbitrary JSON schema passthrough outside `extensions`
 - environment-variable interpolation inside the manifest itself
-- YAML support in MVP
 - per-target nested custom payloads before the core adapter contracts are stable
