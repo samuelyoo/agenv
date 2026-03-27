@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_No unreleased changes._
+
+## [2.1.0] - 2026-03-26
+
 ### Added
 
 - Backend framework detection: Express, Fastify, Hono, Koa (`src/detect/frameworks.ts`)
