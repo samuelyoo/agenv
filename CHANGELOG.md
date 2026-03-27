@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No unreleased changes._
 
+## [2.2.0] - 2026-03-26
+
+### Added
+
+- `agenv update` command — self-updates to latest npm version via `npm install -g agenv-cli@latest`
+- Automatic version check on every CLI run (24h cached in `~/.agenv/version-check.json`)
+- Update notification when a newer version is available on npm
+
 ## [2.1.0] - 2026-03-26
 
 ### Added
