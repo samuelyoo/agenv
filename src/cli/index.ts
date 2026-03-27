@@ -8,6 +8,8 @@ import { registerDoctorCommand } from "./commands/doctor.js";
 import { registerGenerateCommand } from "./commands/generate.js";
 import { registerInitCommand } from "./commands/init.js";
 import { registerTemplatesListCommand } from "./commands/templates-list.js";
+import { registerUpdateCommand } from "./commands/update.js";
+import { checkForUpdate } from "./version-check.js";
 
 export function createCli(): Command {
   const require = createRequire(import.meta.url);
@@ -27,6 +29,7 @@ export function createCli(): Command {
   registerDiffCommand(program);
   registerDoctorCommand(program);
   registerTemplatesListCommand(program);
+  registerUpdateCommand(program);
 
   return program;
 }
@@ -34,6 +37,12 @@ export function createCli(): Command {
 async function main(): Promise<void> {
   const program = createCli();
   await program.parseAsync(process.argv);
+
+  // Non-blocking update check after command completes
+  const updateMessage = await checkForUpdate();
+  if (updateMessage) {
+    console.error(updateMessage);
+  }
 }
 
 main().catch((error: unknown) => {
