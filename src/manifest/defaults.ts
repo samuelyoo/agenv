@@ -1,15 +1,17 @@
 import {
   manifestSchema,
   type Framework,
+  type Language,
   type Manifest,
   type ProjectType,
 } from "./schema.js";
 
-export const DEFAULT_SCHEMA_VERSION = "1";
+export const DEFAULT_SCHEMA_VERSION = "2";
 
 export type RecommendedManifestOptions = {
   name: string;
   framework: Framework;
+  language?: Language | undefined;
   projectType?: ProjectType | undefined;
   targets?: Partial<Manifest["targets"]> | undefined;
   setup?: Partial<Manifest["setup"]> | undefined;
@@ -81,6 +83,7 @@ export function buildRecommendedManifest(
   options: RecommendedManifestOptions,
 ): Manifest {
   const projectType = options.projectType ?? "web-app";
+  const language = options.language ?? "ts";
 
   const projectTypeBlocks =
     projectType === "api-service"
@@ -162,7 +165,7 @@ export function buildRecommendedManifest(
       name: options.name,
       type: projectType,
       framework: options.framework,
-      language: "ts",
+      language: language,
     },
     setup: {
       depth: "recommended",
@@ -210,5 +213,6 @@ export function buildRecommendedManifest(
       mcpPresets: [],
       ...options.generated,
     },
+    packs: [],
   });
 }

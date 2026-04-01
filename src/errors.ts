@@ -70,6 +70,67 @@ export class BackupError extends AgenvError {
   }
 }
 
+export class PackNotFoundError extends AgenvError {
+  constructor(id: string) {
+    super("PACK_NOT_FOUND", `Pack "${id}" not found. Use "agenv add pack --list" to see available packs.`);
+    this.name = "PackNotFoundError";
+  }
+}
+
+export class PackValidationError extends AgenvError {
+  readonly details: string[];
+
+  constructor(packDir: string, details: string[]) {
+    super(
+      "PACK_INVALID",
+      `Pack at "${packDir}" is invalid:\n${details.map((d) => `  - ${d}`).join("\n")}`,
+    );
+    this.name = "PackValidationError";
+    this.details = details;
+  }
+}
+
+export class LockfileError extends AgenvError {
+  constructor(message: string) {
+    super("LOCKFILE_ERROR", message);
+    this.name = "LockfileError";
+  }
+}
+
+export class AuditError extends AgenvError {
+  constructor(message: string) {
+    super("AUDIT_ERROR", message);
+    this.name = "AuditError";
+  }
+}
+
+export class SourceResolutionError extends AgenvError {
+  constructor(message: string) {
+    super("SOURCE_RESOLUTION_FAILED", message);
+    this.name = "SourceResolutionError";
+  }
+}
+
+export class PublishError extends AgenvError {
+  constructor(message: string) {
+    super("PUBLISH_FAILED", message);
+    this.name = "PublishError";
+  }
+}
+
+export class CompatibilityWarning extends AgenvError {
+  readonly details: string[];
+
+  constructor(details: string[]) {
+    super(
+      "COMPATIBILITY_WARNING",
+      `Compatibility issues:\n${details.map((d) => `  - ${d}`).join("\n")}`,
+    );
+    this.name = "CompatibilityWarning";
+    this.details = details;
+  }
+}
+
 export function isAgenvError(error: unknown): error is AgenvError {
   return error instanceof AgenvError;
 }

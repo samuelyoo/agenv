@@ -11,6 +11,7 @@ type DiffOptions = {
   targets?: string;
   layer?: string;
   scope?: string;
+  explain?: boolean;
 };
 
 function parseTargets(value?: string): AdapterTarget[] | undefined {
@@ -59,7 +60,7 @@ export async function runDiff(options: RunDiffOptions): Promise<RunDiffResult> {
     }),
   );
   const renderedFiles = renderPlanFiles(manifest, plan);
-  const summary = await summarizeRenderedDiff(options.cwd, renderedFiles);
+  const summary = await summarizeRenderedDiff(options.cwd, renderedFiles, plan.files);
 
   return {
     command: "diff",
@@ -77,6 +78,7 @@ export function registerDiffCommand(program: Command): void {
     .option("--targets <list>", "limit diff to selected targets")
     .option("--layer <list>", "limit diff to selected layers")
     .option("--scope <list>", "limit diff to shared or local scope")
+    .option("--explain", "show per-file target, layer, and purpose")
     .action(async (options: DiffOptions) => {
       const result = await runDiff({
         cwd: process.cwd(),
@@ -87,14 +89,23 @@ export function registerDiffCommand(program: Command): void {
         }),
       });
 
-      const text = formatTextBlock([
+      const lines = [
         `Manifest: ${result.manifestPath}`,
         `Create: ${result.summary.create.length}`,
         `Update: ${result.summary.update.length}`,
         `Unchanged: ${result.summary.unchanged.length}`,
         `Skip: ${result.summary.skip.length}`,
         `Warnings: ${result.plan.warnings.length}`,
-      ]);
+      ];
+
+      if (options.explain) {
+        lines.push("", "--- Entries ---");
+        for (const entry of result.summary.entries) {
+          lines.push(`  ${entry.action}  ${entry.path}  [${entry.target}/${entry.layer}] ${entry.purpose}`);
+        }
+      }
+
+      const text = formatTextBlock(lines);
 
       process.stdout.write(formatCommandOutput(text, result, Boolean(options.json)));
     });

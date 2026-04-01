@@ -1,7 +1,7 @@
 import { isRecord } from "../utils/json.js";
 import { ManifestValidationError } from "../errors.js";
 
-export const CURRENT_SCHEMA_VERSION = "1";
+export const CURRENT_SCHEMA_VERSION = "2";
 
 type Migration = {
   from: string;
@@ -17,7 +17,13 @@ type Migration = {
  *
  *   { from: "1", to: "2", migrate: (data) => { ... return transformed; } }
  */
-const MIGRATIONS: Migration[] = [];
+const MIGRATIONS: Migration[] = [
+  {
+    from: "1",
+    to: "2",
+    migrate: (data) => ({ ...data, schemaVersion: "2" }),
+  },
+];
 
 function getSchemaVersion(data: unknown): string | undefined {
   if (isRecord(data) && typeof data["schemaVersion"] === "string") {

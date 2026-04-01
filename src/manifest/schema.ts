@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-export const frameworkSchema = z.enum(["react", "nextjs", "vite-react", "express", "fastify", "hono", "koa"]);
+export const languageSchema = z.enum(["ts", "python", "go", "rust", "java", "ruby", "other"]);
+export const frameworkSchema = z.enum(["react", "nextjs", "vite-react", "express", "fastify", "hono", "koa", "django", "flask", "fastapi", "gin", "echo", "actix", "axum", "spring", "rails", "none"]);
 export const projectTypeSchema = z.enum(["dashboard", "web-app", "api-service", "full-stack", "library", "cli-tool", "mobile"]);
 export const setupDepthSchema = z.enum(["recommended", "semi-custom", "advanced"]);
 export const setupModeSchema = z.enum(["base", "skills", "agents", "full"]);
@@ -15,7 +16,7 @@ export const manifestSchema = z
         name: z.string().min(1),
         type: projectTypeSchema,
         framework: frameworkSchema,
-        language: z.literal("ts"),
+        language: languageSchema,
       })
       .strict(),
     setup: z
@@ -131,6 +132,19 @@ export const manifestSchema = z
         mcpPresets: z.array(z.string()),
       })
       .strict(),
+    packs: z
+      .array(
+        z
+          .object({
+            source: z.enum(["builtin", "local", "github"]),
+            id: z.string().min(1),
+            version: z.string().optional(),
+            path: z.string().optional(),
+          })
+          .strict(),
+      )
+      .optional()
+      .default([]),
     extensions: z.record(z.string(), z.unknown()).optional(),
   })
   .strict();
@@ -163,6 +177,7 @@ export const localOverrideSchema = z
   .strict();
 
 export type Manifest = z.infer<typeof manifestSchema>;
+export type Language = z.infer<typeof languageSchema>;
 export type Framework = z.infer<typeof frameworkSchema>;
 export type ProjectType = z.infer<typeof projectTypeSchema>;
 export type SetupMode = z.infer<typeof setupModeSchema>;

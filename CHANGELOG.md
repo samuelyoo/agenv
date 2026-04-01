@@ -9,6 +9,110 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No unreleased changes._
 
+## [2.7.0] - 2026-03-31
+
+### Added
+
+- **Pack catalog** — new `src/catalog/` module with enriched `CatalogEntry` type including
+  compatibility metadata (targets, projectTypes, languages) and provenance (source, publisher).
+- **Catalog search** — `searchCatalog(query)` with case-insensitive substring matching on
+  name, description, and ID.
+- **Compatibility checking** — `checkCompatibility(entry, manifest)` validates pack compatibility
+  against manifest targets, project type, and language.
+- **GitHub source resolver** — `src/sources/github.ts` with `GitHubResolver` implementing
+  file-based pack resolution (simulated GitHub fetch) with content hash verification.
+- **Source resolver interface** — `SourceResolver` and `ResolvedSource` types in `src/sources/types.ts`.
+- **Pack publishing** — `src/publish/` module: `buildArtifact()`, `writeArtifact()`, `publishPack()`
+  produce JSON bundle artifacts with SHA-256 checksums.
+- **Outdated detection** — `src/upgrade/outdated.ts`: `checkOutdated(lockfile)` compares locked
+  versions against catalog versions.
+- **Upgrade planning** — `src/upgrade/upgrade.ts`: `planUpgrade(lockfile, packId?)` and
+  `applyUpgrade(lockfile, plan)` for dry-run and apply workflows.
+- `"github"` added to pack source enum (`packSourceSchema` and manifest `packs` source field).
+- Lockfile provenance fields: optional `sourceUrl` and `publisher` on `LockfilePack`.
+- 3 new error classes: `SourceResolutionError`, `PublishError`, `CompatibilityWarning`.
+- 32 new tests across 6 files (411 total).
+
+## [2.6.0] - 2026-03-31
+
+### Added
+
+- **Multi-language support** — manifest `project.language` now accepts `ts`, `python`, `go`, `rust`,
+  `java`, `ruby`, or `other` (previously locked to `ts`).
+- **Expanded framework detection** — 10 new frameworks: `django`, `flask`, `fastapi` (Python),
+  `gin`, `echo` (Go), `actix`, `axum` (Rust), `spring` (Java), `rails` (Ruby), `none` (generic).
+- **Language detection** — `src/detect/languages.ts` auto-detects project language from marker files
+  (`tsconfig.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, `pom.xml`, `Gemfile`, etc.).
+- **Repo graph discovery** — `src/detect/repo-graph.ts` detects `single-package`, `workspace`
+  (npm/pnpm workspaces), or `monorepo` (Lerna) repo structures.
+- **Diff explanations** — `DiffSummary` now includes an `entries` array with per-file `target`,
+  `layer`, `purpose`, and `action` metadata.
+- `agenv diff --explain` flag — displays per-file explanation metadata.
+- `RepoInspection` now includes `language` and `repoGraph` fields.
+- Schema version bumped to `"2"` with transparent v1→v2 migration.
+- 41 new tests across language detection, repo graph, framework expansion, schema v2, migration,
+  and diff explanation modules (379 total).
+
+## [2.5.0] - 2026-03-31
+
+### Added
+
+- **Audit system** — `agenv audit` command for security and provenance checks on MCP presets,
+  lockfiles, env variables, and dangerous patterns.
+- `agenv audit --json` for machine-readable audit output.
+- `agenv audit --strict` to treat warnings as errors (CI enforcement).
+- `agenv doctor --fix` flag — auto-applies safe remediation for fixable findings.
+- `agenv doctor --explain <code>` flag — shows detailed explanation for any finding code.
+- `src/audit/` module group: `index.ts`, `rules.ts`, `ownership.ts`.
+- `src/doctor/explain.ts` — static explanation map with remediation guidance for all finding codes.
+- `src/doctor/fixes.ts` — `applyFixes` with handlers for `local_override_missing` and
+  `ownership_modified` findings.
+- Generated file ownership checking integrated into doctor pipeline.
+- 21 new tests across audit rules, doctor explain, and doctor fixes modules.
+
+## [2.4.0] - 2026-04-07
+
+### Added
+
+- **Pack system** — reusable bundles of manifest fragments (coding style, review rules, MCP presets,
+  conventions, extensions) that can be added, installed, and resolved deterministically.
+- `agenv add pack <id>` command — adds a built-in pack reference to the manifest.
+- `agenv add preset <id>` command — adds an MCP preset to the manifest's generated block.
+- `agenv add pack --list` / `agenv add preset --list` to display available items.
+- `agenv install` command — resolves packs, builds an install plan, and writes `ai-workspace.lock`.
+- `agenv install --dry-run` — previews the install plan without writing the lockfile.
+- `agenv pack <dir>` command — validates a local pack directory against the pack schema.
+- `ai-workspace.lock` lockfile — SHA-256 content-addressed lockfile recording resolved pack state.
+- Stale lockfile warning during `agenv generate` when manifest has changed since last install.
+- 3 built-in packs: `secure-defaults`, `strict-typescript`, `testing-essentials`.
+- `src/packs/` module group: `schema.ts`, `catalog.ts`, `load.ts`, `resolve.ts`, `pack.ts`.
+- `src/install/` module group: `lockfile.ts`, `plan.ts`, `apply.ts`, `index.ts`.
+- `packs` field in manifest schema (backward-compatible, defaults to empty array).
+- 58 new tests across packs, install, and manifest schema modules (303 total).
+
+### Changed
+
+- `--json` flag available on `add`, `install`, and `pack` commands for machine-readable output.
+
+## [2.3.0] - 2026-03-31
+
+### Added
+
+- `agenv import` command — scans existing AI config files (`AGENTS.md`, `.claude/`, `.cursorrules`,
+  `.windsurfrules`, `.github/copilot-instructions.md`, `.mcp.json`) and infers manifest fields
+  from them. Default mode is report-only; use `--write` to write a manifest.
+- `--from <list>` option on `agenv import` to limit scanning to specific sources.
+- `--json` option on `agenv import` for machine-readable import report output.
+- `agenv init` now shows a preview block and asks for confirmation before writing the manifest
+  when running interactively. The `--yes` flag skips the prompt (CI-safe).
+- `src/import/` module group: `index.ts`, `merge.ts`, `report.ts`,
+  `detectors/codex.ts`, `detectors/claude.ts`, `detectors/cursor.ts`,
+  `detectors/windsurf.ts`, `detectors/copilot.ts`, `detectors/mcp.ts`.
+
+### Changed
+
+- Product positioning updated to "AI workspace control plane" across README and package description.
+
 ## [2.2.0] - 2026-03-26
 
 ### Added

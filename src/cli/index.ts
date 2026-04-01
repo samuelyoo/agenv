@@ -3,10 +3,15 @@
 import { createRequire } from "node:module";
 import { Command } from "commander";
 import { isAgenvError } from "../errors.js";
+import { registerAddCommand } from "./commands/add.js";
+import { registerAuditCommand } from "./commands/audit.js";
 import { registerDiffCommand } from "./commands/diff.js";
 import { registerDoctorCommand } from "./commands/doctor.js";
 import { registerGenerateCommand } from "./commands/generate.js";
+import { registerImportCommand } from "./commands/import.js";
 import { registerInitCommand } from "./commands/init.js";
+import { registerInstallCommand } from "./commands/install.js";
+import { registerPackCommand } from "./commands/pack.js";
 import { registerTemplatesListCommand } from "./commands/templates-list.js";
 import { registerUpdateCommand } from "./commands/update.js";
 import { checkForUpdate } from "./version-check.js";
@@ -25,9 +30,14 @@ export function createCli(): Command {
     .version(pkg.version);
 
   registerInitCommand(program);
+  registerImportCommand(program);
+  registerAddCommand(program);
+  registerInstallCommand(program);
+  registerPackCommand(program);
   registerGenerateCommand(program);
   registerDiffCommand(program);
   registerDoctorCommand(program);
+  registerAuditCommand(program);
   registerTemplatesListCommand(program);
   registerUpdateCommand(program);
 

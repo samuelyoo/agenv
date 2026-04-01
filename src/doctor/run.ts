@@ -1,4 +1,5 @@
 import { ADAPTERS } from "../adapters/index.js";
+import { checkOwnership } from "../audit/ownership.js";
 import { inspectRepo } from "../detect/repo-inspector.js";
 import { loadManifest } from "../manifest/load.js";
 import type { Manifest } from "../manifest/schema.js";
@@ -66,6 +67,8 @@ export async function runDoctor(
     // MCP-specific checks (only when MCP is enabled)
     ...(supportedTargets.has("mcp") ? checkMcpEnvVars(manifest) : []),
     ...(supportedTargets.has("mcp") ? await checkMcpConfigFormat(cwd, manifest) : []),
+    // Ownership checks (only when manifest loaded successfully)
+    ...(manifest ? (await checkOwnership(cwd, manifest)).findings : []),
   ];
 
   const result = partitionFindings(findings);

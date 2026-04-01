@@ -4,6 +4,7 @@ import { access } from "node:fs/promises";
 import { join } from "node:path";
 import { summarizeRenderedDiff } from "../../fs/diff.js";
 import { writeRenderedFiles } from "../../fs/write.js";
+import { isLockfileStale, readLockfile } from "../../install/lockfile.js";
 import { loadManifest } from "../../manifest/load.js";
 import { buildGenerationPlan } from "../../planner/build-plan.js";
 import type { AdapterTarget, OutputLayer, OutputScope } from "../../planner/output-map.js";
@@ -60,6 +61,10 @@ export type RunGenerateResult = {
 
 export async function runGenerate(options: RunGenerateOptions): Promise<RunGenerateResult> {
   const { manifest, sharedPath } = await loadManifest(options.cwd);
+
+  const lockfile = await readLockfile(options.cwd);
+  const lockfileStale = lockfile !== undefined && isLockfileStale(manifest, lockfile);
+
   const plan = buildGenerationPlan(
     manifest,
     compactObject({
@@ -68,6 +73,15 @@ export async function runGenerate(options: RunGenerateOptions): Promise<RunGener
       scopes: options.scopes,
     }),
   );
+
+  if (lockfileStale) {
+    plan.warnings.push({
+      severity: "warning",
+      code: "lockfile_stale",
+      message: "Lockfile is out of date. Run `agenv install` to update.",
+    });
+  }
+
   const renderedFiles = renderPlanFiles(manifest, plan);
   const summary = options.dryRun
     ? await summarizeRenderedDiff(options.cwd, renderedFiles)

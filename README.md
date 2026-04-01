@@ -3,9 +3,9 @@
 [![npm version](https://img.shields.io/npm/v/agenv-cli.svg)](https://www.npmjs.com/package/agenv-cli)
 [![license](https://img.shields.io/npm/l/agenv-cli.svg)](LICENSE)
 
-Generate portable AI workspace configs for any web development project — one manifest for Copilot, Claude, Codex, MCP, Cursor, and Windsurf.
+The AI workspace control plane for web development repositories — one canonical manifest for Copilot, Claude, Codex, MCP, Cursor, and Windsurf.
 
-Define one canonical `ai-workspace.json` manifest, then generate tool-specific configuration files for all six targets from a single source of truth.
+Define one canonical `ai-workspace.json` as the source of truth for your AI workspace configuration, generate tool-specific files for all six targets, and import existing AI configs from any tool you already use.
 
 ## Quick Start
 

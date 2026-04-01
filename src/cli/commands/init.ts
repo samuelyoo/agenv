@@ -1,4 +1,5 @@
 import { Command } from "commander";
+import { confirm } from "@inquirer/prompts";
 import { InvalidOptionError } from "../../errors.js";
 import { inspectRepo } from "../../detect/repo-inspector.js";
 import { buildRecommendedManifest } from "../../manifest/defaults.js";
@@ -155,6 +156,29 @@ export function registerInitCommand(program: Command): void {
       }
 
       const plan = buildGenerationPlan(manifest);
+
+      // Preview and confirm before writing (interactive, non-dry-run only)
+      if (!options.dryRun && !options.yes) {
+        const enabledTargets = Object.entries(manifest.targets)
+          .filter(([, enabled]) => enabled)
+          .map(([target]) => target)
+          .join(", ");
+        process.stdout.write(
+          formatTextBlock([
+            `\nPreview:`,
+            `  Project: ${manifest.project.name} (${manifest.project.framework}, ${manifest.project.type})`,
+            `  Targets: ${enabledTargets}`,
+            `  Files to generate: ${plan.files.length}`,
+            `  Warnings: ${plan.warnings.length}`,
+          ]),
+        );
+        const shouldWrite = await confirm({ message: "Write manifest to ai-workspace.json?" });
+        if (!shouldWrite) {
+          process.stdout.write("Init cancelled.\n");
+          return;
+        }
+      }
+
       const manifestPath = options.dryRun ? "ai-workspace.json" : await saveManifest(cwd, manifest);
 
       const text = formatTextBlock([
