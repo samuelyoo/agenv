@@ -1,7 +1,9 @@
 node_modules/
 dist/
 .DS_Store
-.vscode
+.vscode/*
+!.vscode/mcp.json
+.claude/worktrees/
 
 ai-workspace.local.json
 .mcp.local.json

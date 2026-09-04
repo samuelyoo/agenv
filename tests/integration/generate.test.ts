@@ -38,7 +38,7 @@ describe("runGenerate", () => {
         "docs/ai-prompts/bootstrap.md",
         "AGENTS.md",
         ".github/copilot-instructions.md",
-        ".claude/README.md",
+        ".claude/CLAUDE.md",
       ]),
     );
 

@@ -54,7 +54,7 @@ export const manifestSchema = z
         apiStyle: z.enum(["rest", "graphql", "trpc"]),
         validation: z.enum(["zod", "typebox", "custom"]),
         orm: z.enum(["prisma", "drizzle", "none"]),
-        testing: z.array(z.enum(["vitest", "supertest", "playwright"])).min(1),
+        testing: z.array(z.enum(["vitest", "supertest", "playwright", "pytest", "go-test", "cargo-test", "junit", "rspec", "custom"])).min(1),
         auth: z.enum(["jwt", "session", "none", "custom"]),
       })
       .strict()

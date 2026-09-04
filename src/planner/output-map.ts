@@ -1,4 +1,5 @@
 import type { Manifest, ProjectType } from "../manifest/schema.js";
+import { getPresetById } from "../mcp/presets.js";
 
 export const ADAPTER_TARGETS = ["codex", "copilot", "claude", "mcp", "cursor", "windsurf"] as const;
 
@@ -193,7 +194,11 @@ export const OUTPUT_MAP: OutputMapEntry[] = [
     purpose: "Environment placeholder documentation",
     generated: true,
     trustSensitive: false,
-    applies: (manifest) => manifest.generated.mcpPresets.length > 0,
+    applies: (manifest) =>
+      manifest.generated.mcpPresets.some((id) => {
+        const preset = getPresetById(id);
+        return preset !== undefined && Object.keys(preset.env).length > 0;
+      }),
   },
   {
     target: "shared",
@@ -227,10 +232,10 @@ export const OUTPUT_MAP: OutputMapEntry[] = [
   },
   {
     target: "claude",
-    path: ".claude/README.md",
+    path: ".claude/CLAUDE.md",
     layer: "base",
     scope: "shared",
-    purpose: "Claude workspace overview",
+    purpose: "Claude Code project instructions",
     generated: true,
     trustSensitive: false,
     applies: (manifest) => manifest.targets.claude,
@@ -240,7 +245,7 @@ export const OUTPUT_MAP: OutputMapEntry[] = [
     .filter((v, i, a) => a.indexOf(v) === i)
     .map<OutputMapEntry>((skillName) => ({
       target: "claude",
-      path: `.claude/skills/${skillName}.md`,
+      path: `.claude/skills/${skillName}/SKILL.md`,
       layer: "skills-agents",
       scope: "shared",
       purpose: `Claude skill: ${skillName}`,
@@ -282,20 +287,40 @@ export const OUTPUT_MAP: OutputMapEntry[] = [
     path: ".mcp.json",
     layer: "base",
     scope: "shared",
-    purpose: "Shared MCP configuration",
+    purpose: "Claude Code MCP configuration",
     generated: true,
     trustSensitive: true,
-    applies: (manifest) => manifest.targets.mcp,
+    applies: (manifest) => manifest.targets.mcp && manifest.targets.claude,
   },
   {
     target: "mcp",
-    path: ".mcp.local.json",
+    path: ".codex/config.toml",
     layer: "base",
-    scope: "local",
-    purpose: "Local MCP overrides",
+    scope: "shared",
+    purpose: "Codex MCP configuration",
     generated: true,
     trustSensitive: true,
-    applies: (manifest) => manifest.targets.mcp && manifest.setup.scope !== "shared",
+    applies: (manifest) => manifest.targets.mcp && manifest.targets.codex,
+  },
+  {
+    target: "mcp",
+    path: ".cursor/mcp.json",
+    layer: "base",
+    scope: "shared",
+    purpose: "Cursor MCP configuration",
+    generated: true,
+    trustSensitive: true,
+    applies: (manifest) => manifest.targets.mcp && manifest.targets.cursor === true,
+  },
+  {
+    target: "mcp",
+    path: ".vscode/mcp.json",
+    layer: "base",
+    scope: "shared",
+    purpose: "GitHub Copilot and VS Code MCP configuration",
+    generated: true,
+    trustSensitive: true,
+    applies: (manifest) => manifest.targets.mcp && manifest.targets.copilot,
   },
   {
     target: "cursor",

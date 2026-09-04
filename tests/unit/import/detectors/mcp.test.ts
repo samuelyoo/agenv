@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { detectMcp } from "../../../../src/import/detectors/mcp.js";
@@ -47,5 +47,27 @@ describe("detectMcp", () => {
     expect(result.findings).toHaveLength(0);
     expect(result.unsupported).toHaveLength(1);
     expect(result.unsupported[0].reason).toContain("not valid JSON");
+  });
+
+  it("detects Cursor, VS Code, and Codex host-specific MCP files", async () => {
+    await mkdir(join(cwd, ".cursor"), { recursive: true });
+    await mkdir(join(cwd, ".vscode"), { recursive: true });
+    await mkdir(join(cwd, ".codex"), { recursive: true });
+    await writeFile(
+      join(cwd, ".cursor", "mcp.json"),
+      JSON.stringify({ mcpServers: { one: { url: "https://example.com/mcp" } } }),
+    );
+    await writeFile(
+      join(cwd, ".vscode", "mcp.json"),
+      JSON.stringify({ servers: { two: { url: "https://example.com/mcp" } } }),
+    );
+    await writeFile(
+      join(cwd, ".codex", "config.toml"),
+      '[mcp_servers."three"]\nurl = "https://example.com/mcp"\n',
+    );
+    const result = await detectMcp(cwd);
+    expect(result.findings.map((finding) => finding.path)).toEqual(
+      expect.arrayContaining([".cursor/mcp.json", ".vscode/mcp.json", ".codex/config.toml"]),
+    );
   });
 });

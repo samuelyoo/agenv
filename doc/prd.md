@@ -1,5 +1,7 @@
 # PRD: AI Workspace Bootstrapper for Dashboard Development
 
+> Historical v1 design document. For the current 3.0 contract, use the [manifest specification](manifest-spec.md), [CLI specification](cli-spec.md), and [output map](output-map.md).
+
 ## 1. Overview
 
 ### Product name

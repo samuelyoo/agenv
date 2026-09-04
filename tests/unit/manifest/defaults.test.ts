@@ -96,8 +96,27 @@ describe("buildRecommendedManifest", () => {
     expect(manifest.conventions.accessibility).toBe(false);
     expect(manifest.conventions.responsive).toBe(false);
     expect(manifest.instructions.codingStyle).toContain(
-      "Validate all inputs at the boundary with Zod or equivalent.",
+      "Validate all inputs with the project's schema-validation library at the boundary.",
     );
+  });
+
+  it("infers language-aware API defaults from a backend framework", () => {
+    const manifest = buildRecommendedManifest({
+      name: "payments-api",
+      framework: "fastapi",
+    });
+
+    expect(manifest.project).toMatchObject({
+      type: "api-service",
+      framework: "fastapi",
+      language: "python",
+    });
+    expect(manifest.apiService).toMatchObject({
+      validation: "custom",
+      orm: "none",
+      testing: ["pytest"],
+    });
+    expect(manifest.instructions.codingStyle.join("\n")).not.toContain("TypeScript");
   });
 
   it("supports a full-stack project type with combined defaults", () => {

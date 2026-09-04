@@ -2,7 +2,7 @@ import { access } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { detectDashboardHints } from "./dependencies.js";
 import { detectExistingAiFiles } from "./existing-ai-files.js";
-import { detectFrameworkFromDependencies, type DetectedFramework } from "./frameworks.js";
+import { detectFrameworkFromRepo, type DetectedFramework } from "./frameworks.js";
 import { detectLanguage } from "./languages.js";
 import { getAllDependencies, loadPackageJson } from "./package-json.js";
 import { discoverRepoGraph, type RepoGraph } from "./repo-graph.js";
@@ -47,10 +47,11 @@ export async function inspectRepo(cwd: string): Promise<RepoInspection> {
     detectLanguage(cwd),
     discoverRepoGraph(cwd),
   ]);
+  const framework = await detectFrameworkFromRepo(cwd, dependencies, language);
 
   return {
     projectName: packageJson?.name ?? basename(cwd),
-    framework: detectFrameworkFromDependencies(dependencies),
+    framework,
     language,
     packageManager: await detectPackageManager(cwd),
     existingAiFiles: await detectExistingAiFiles(cwd),

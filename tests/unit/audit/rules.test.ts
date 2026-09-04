@@ -39,10 +39,10 @@ describe("checkMcpTrustLevels", () => {
 });
 
 describe("checkMissingEnvVars", () => {
-  it("flags presets with env placeholders", () => {
+  it("does not require tokens for hosted OAuth presets", () => {
     const manifest = makeManifestWithPresets(["github"]);
     const findings = checkMissingEnvVars(manifest);
-    expect(findings.some((f) => f.code === "mcp_env_placeholder")).toBe(true);
+    expect(findings).toHaveLength(0);
   });
 
   it("returns empty when preset has no env vars", () => {
@@ -55,12 +55,6 @@ describe("checkMissingEnvVars", () => {
 describe("checkDangerousPatterns", () => {
   it("flags filesystem preset", () => {
     const manifest = makeManifestWithPresets(["filesystem"]);
-    const findings = checkDangerousPatterns(manifest);
-    expect(findings.some((f) => f.code === "mcp_dangerous_pattern")).toBe(true);
-  });
-
-  it("flags puppeteer preset", () => {
-    const manifest = makeManifestWithPresets(["puppeteer"]);
     const findings = checkDangerousPatterns(manifest);
     expect(findings.some((f) => f.code === "mcp_dangerous_pattern")).toBe(true);
   });

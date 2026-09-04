@@ -50,6 +50,26 @@ describe("runInitFlow", () => {
     expect(result.targets.codex).toBe(true);
   });
 
+  it("keeps a compatible detected backend framework in recommended mode", async () => {
+    (checkbox as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(["codex"]);
+    (select as unknown as ReturnType<typeof vi.fn>)
+      .mockResolvedValueOnce("api-service")
+      .mockResolvedValueOnce("recommended");
+
+    const result = await runInitFlow("fastapi");
+    expect(result.framework).toBe("fastapi");
+  });
+
+  it("does not apply a detected backend framework to a dashboard", async () => {
+    (checkbox as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(["codex"]);
+    (select as unknown as ReturnType<typeof vi.fn>)
+      .mockResolvedValueOnce("dashboard")
+      .mockResolvedValueOnce("recommended");
+
+    const result = await runInitFlow("fastapi");
+    expect(result.framework).toBe("react");
+  });
+
   it("skips MCP presets when MCP target is off", async () => {
     (checkbox as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce([
       "copilot",

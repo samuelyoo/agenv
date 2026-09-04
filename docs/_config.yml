@@ -1,5 +1,5 @@
 title: agenv
-description: Bootstrap a portable, reviewable AI workspace for web repositories.
+description: Bootstrap a portable, reviewable AI workspace for software repositories.
 url: "https://samuelyoo.github.io"
 baseurl: "/agenv"
 repository_url: "https://github.com/samuelyoo/agenv"

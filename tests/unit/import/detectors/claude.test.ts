@@ -40,4 +40,12 @@ describe("detectClaude", () => {
     expect(nameFinding!.confidence).toBe("low");
     expect(nameFinding!.value).toBe("ProjectAlpha");
   });
+
+  it("detects a root CLAUDE.md without a .claude directory", async () => {
+    await writeFile(join(cwd, "CLAUDE.md"), "# RootProject\n");
+    const result = await detectClaude(cwd);
+    expect(result.findings.find((finding) => finding.field === "targets.claude")?.path).toBe(
+      "CLAUDE.md",
+    );
+  });
 });

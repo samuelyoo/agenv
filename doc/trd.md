@@ -1,5 +1,7 @@
 # TRD: agenv Package
 
+> Historical v1 design document. For the current 3.0 contract, use the [manifest specification](manifest-spec.md), [CLI specification](cli-spec.md), and [output map](output-map.md).
+
 ## 1. Purpose
 
 This Technical Requirements Document defines how to build `agenv`, an npm package that bootstraps a portable, reviewable AI workspace for dashboard development repositories.

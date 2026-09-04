@@ -38,7 +38,7 @@ describe("doctor supports() gate", () => {
       projectType: "dashboard",
     });
     manifest.targets.mcp = true;
-    manifest.generated.mcpPresets = ["fetch"];
+    manifest.generated.mcpPresets = ["github"];
     await saveManifest(cwd, manifest);
 
     const result = await runDoctor(cwd, { strict: false, targets: [] });

@@ -44,7 +44,7 @@ describe("output contract verification", () => {
     ]);
   });
 
-  it("mcp target marks both outputs as trust-sensitive", () => {
+  it("mcp target marks every host-specific output as trust-sensitive", () => {
     const mcpEntries = OUTPUT_MAP.filter(
       (e) => e.target === "mcp" && e.applies(allTargetsManifest),
     );
@@ -84,8 +84,11 @@ describe("output contract verification", () => {
 
     expect(basePaths).toContain("AGENTS.md");
     expect(basePaths).toContain(".github/copilot-instructions.md");
-    expect(basePaths).toContain(".claude/README.md");
+    expect(basePaths).toContain(".claude/CLAUDE.md");
     expect(basePaths).toContain(".mcp.json");
+    expect(basePaths).toContain(".codex/config.toml");
+    expect(basePaths).toContain(".cursor/mcp.json");
+    expect(basePaths).toContain(".vscode/mcp.json");
     expect(basePaths).toContain(".cursor/rules/context.mdc");
     expect(basePaths).toContain(".windsurf/rules/context.md");
   });

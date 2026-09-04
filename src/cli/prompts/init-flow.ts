@@ -12,13 +12,32 @@ import type { UiAnswers } from "./sessions/ui.js";
 import type { DataAnswers } from "./sessions/data.js";
 import type { QualityAnswers } from "./sessions/quality.js";
 import type { OutputAnswers } from "./sessions/output.js";
-import type { ProjectType } from "../../manifest/schema.js";
+import type { Framework, ProjectType } from "../../manifest/schema.js";
+
+const API_FRAMEWORKS = new Set<Framework>([
+  "express", "fastify", "hono", "koa", "django", "flask", "fastapi",
+  "gin", "echo", "actix", "axum", "spring", "rails",
+]);
+
+function recommendedFramework(
+  detectedFramework: string | undefined,
+  projectType: ProjectType,
+): Framework {
+  const detected = detectedFramework as Framework | undefined;
+  if (projectType === "api-service") {
+    return detected && API_FRAMEWORKS.has(detected) ? detected : "express";
+  }
+  if (projectType === "library" || projectType === "cli-tool") return "none";
+  return detected && !API_FRAMEWORKS.has(detected) && detected !== "none"
+    ? detected
+    : "react";
+}
 
 export type InitFlowAnswers = {
   targets: { copilot: boolean; claude: boolean; codex: boolean; mcp: boolean; cursor: boolean; windsurf: boolean };
   projectType: ProjectType;
   setupDepth: "recommended" | "semi-custom" | "advanced";
-  framework: "react" | "nextjs" | "vite-react" | "express" | "fastify" | "hono";
+  framework: Framework;
   ui: UiAnswers | undefined;
   data: DataAnswers | undefined;
   authModel: "rbac" | "none" | "custom";
@@ -40,9 +59,7 @@ export async function runInitFlow(detectedFramework?: string): Promise<InitFlowA
       targets,
       projectType,
       setupDepth,
-      framework: isNonUi
-        ? "express"
-        : ((detectedFramework as "react" | "nextjs" | "vite-react") ?? "react"),
+      framework: recommendedFramework(detectedFramework, projectType),
       ui: isNonUi ? undefined : { styling: "tailwind", components: "shadcn-ui", charts: "recharts", forms: "react-hook-form-zod", tables: "tanstack-table" },
       data: isNonUi ? undefined : { dataFetching: "tanstack-query", state: "local-first" },
       authModel: projectType === "dashboard" ? "rbac" : "custom",

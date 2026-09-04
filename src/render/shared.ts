@@ -4,14 +4,9 @@ import type { Manifest } from "../manifest/schema.js";
 import type { PlannedFile } from "../planner/build-plan.js";
 import { getPromptPacksForType } from "../planner/output-map.js";
 import type { RenderedFile } from "../adapters/types.js";
+import { describeProjectType } from "../adapters/project-context.js";
 import { PROMPT_TEMPLATE_DEFINITIONS } from "./prompt-templates.js";
 import { getPresetById } from "../mcp/presets.js";
-
-function describeProjectType(manifest: Manifest): string {
-  if (manifest.project.type === "web-app") return "web app";
-  if (manifest.project.type === "api-service") return "API service";
-  return "dashboard";
-}
 
 function describeProjectFocus(manifest: Manifest): string {
   if (manifest.project.type === "web-app") {
@@ -34,6 +29,7 @@ function buildProjectContext(manifest: Manifest): string[] {
     `Project: ${manifest.project.name}`,
     `Framework: ${manifest.project.framework}`,
     `Project type: ${describeProjectType(manifest)}`,
+    `Language: ${manifest.project.language}`,
     `Targets: ${enabledTargets.join(", ") || "none"}`,
     `Accessibility required: ${manifest.conventions.accessibility ? "yes" : "no"}`,
     `Responsive behavior required: ${manifest.conventions.responsive ? "yes" : "no"}`,

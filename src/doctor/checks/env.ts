@@ -1,8 +1,15 @@
 import type { Manifest } from "../../manifest/schema.js";
+import { getPresetById } from "../../mcp/presets.js";
 import type { DiagnosticFinding } from "../types.js";
 
 export function runEnvChecks(manifest: Manifest | undefined): DiagnosticFinding[] {
-  if (!manifest || manifest.generated.mcpPresets.length === 0) {
+  if (
+    !manifest ||
+    !manifest.generated.mcpPresets.some((id) => {
+      const preset = getPresetById(id);
+      return preset !== undefined && Object.keys(preset.env).length > 0;
+    })
+  ) {
     return [];
   }
 

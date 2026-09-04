@@ -18,10 +18,78 @@ export type RecommendedManifestOptions = {
   generated?: Partial<Manifest["generated"]> | undefined;
 };
 
-function buildCodingStyle(projectType: ProjectType): string[] {
+const BACKEND_FRAMEWORKS: Framework[] = [
+  "express",
+  "fastify",
+  "hono",
+  "koa",
+  "django",
+  "flask",
+  "fastapi",
+  "gin",
+  "echo",
+  "actix",
+  "axum",
+  "spring",
+  "rails",
+];
+
+export function inferLanguageForFramework(framework: Framework): Language {
+  if (["django", "flask", "fastapi"].includes(framework)) return "python";
+  if (["gin", "echo"].includes(framework)) return "go";
+  if (["actix", "axum"].includes(framework)) return "rust";
+  if (framework === "spring") return "java";
+  if (framework === "rails") return "ruby";
+  if (framework === "none") return "other";
+  return "ts";
+}
+
+export function inferProjectTypeForFramework(framework: Framework): ProjectType {
+  if (BACKEND_FRAMEWORKS.includes(framework)) return "api-service";
+  if (framework === "none") return "library";
+  return "web-app";
+}
+
+function apiTestingDefaults(
+  language: Language,
+): NonNullable<Manifest["apiService"]>["testing"] {
+  const values: Record<Language, NonNullable<Manifest["apiService"]>["testing"]> = {
+    ts: ["vitest", "supertest"],
+    python: ["pytest"],
+    go: ["go-test"],
+    rust: ["cargo-test"],
+    java: ["junit"],
+    ruby: ["rspec"],
+    other: ["custom"],
+  };
+  return values[language];
+}
+
+function languageStyle(language: Language): string {
+  switch (language) {
+    case "ts":
+      return "Use TypeScript strict mode.";
+    case "python":
+      return "Use Python type hints on public APIs and follow the configured formatter and linter.";
+    case "go":
+      return "Keep Go code formatted with gofmt and return errors explicitly.";
+    case "rust":
+      return "Keep Rust code formatted with rustfmt and address clippy findings.";
+    case "java":
+      return "Follow the configured Java formatter, language level, and static analysis.";
+    case "ruby":
+      return "Follow the configured Ruby version and project linting conventions.";
+    case "other":
+      return "Follow the repository's established language, formatter, and linting conventions.";
+  }
+}
+
+function buildCodingStyle(projectType: ProjectType, language: Language): string[] {
+  const primaryLanguageRule = languageStyle(language);
+
   if (projectType === "web-app") {
     return [
-      "Use TypeScript strict mode.",
+      primaryLanguageRule,
       "Handle loading, empty, error, and success states explicitly.",
       "Prefer reusable page sections and shared UI patterns over one-off code.",
     ];
@@ -29,8 +97,8 @@ function buildCodingStyle(projectType: ProjectType): string[] {
 
   if (projectType === "api-service") {
     return [
-      "Use TypeScript strict mode.",
-      "Validate all inputs at the boundary with Zod or equivalent.",
+      primaryLanguageRule,
+      "Validate all inputs with the project's schema-validation library at the boundary.",
       "Return consistent error shapes with proper HTTP status codes.",
       "Prefer thin controllers that delegate to service functions.",
     ];
@@ -38,25 +106,25 @@ function buildCodingStyle(projectType: ProjectType): string[] {
 
   if (projectType === "full-stack") {
     return [
-      "Use TypeScript strict mode across both frontend and backend.",
+      primaryLanguageRule,
       "Keep frontend and backend concerns clearly separated.",
-      "Validate all API inputs at the boundary with Zod or equivalent.",
+      "Validate all API inputs with the project's schema-validation library at the boundary.",
       "Handle loading, error, and empty states in UI components.",
     ];
   }
 
   if (projectType === "library") {
     return [
-      "Use TypeScript strict mode.",
+      primaryLanguageRule,
       "Design a minimal, stable public API surface.",
-      "Export named types alongside runtime values.",
+      "Publish explicit public types and keep internal implementation details private.",
       "Avoid side-effects in module initialization.",
     ];
   }
 
   if (projectType === "cli-tool") {
     return [
-      "Use TypeScript strict mode.",
+      primaryLanguageRule,
       "Keep command handlers thin — delegate logic to services.",
       "Provide clear, actionable error messages to the user.",
       "Ensure all commands are testable without spawning a subprocess.",
@@ -65,7 +133,7 @@ function buildCodingStyle(projectType: ProjectType): string[] {
 
   if (projectType === "mobile") {
     return [
-      "Use TypeScript strict mode.",
+      primaryLanguageRule,
       "Keep screens focused — extract shared logic to hooks or services.",
       "Handle loading, empty, and error states in every screen.",
       "Test on both iOS and Android form factors.",
@@ -73,7 +141,7 @@ function buildCodingStyle(projectType: ProjectType): string[] {
   }
 
   return [
-    "Use TypeScript strict mode.",
+    primaryLanguageRule,
     "Handle loading, empty, error, and success states explicitly.",
     "Prefer reusable components and shared patterns over one-off page code.",
   ];
@@ -82,17 +150,17 @@ function buildCodingStyle(projectType: ProjectType): string[] {
 export function buildRecommendedManifest(
   options: RecommendedManifestOptions,
 ): Manifest {
-  const projectType = options.projectType ?? "web-app";
-  const language = options.language ?? "ts";
+  const projectType = options.projectType ?? inferProjectTypeForFramework(options.framework);
+  const language = options.language ?? inferLanguageForFramework(options.framework);
 
   const projectTypeBlocks =
     projectType === "api-service"
       ? {
           apiService: {
             apiStyle: "rest",
-            validation: "zod",
-            orm: "prisma",
-            testing: ["vitest", "supertest"],
+            validation: language === "ts" ? "zod" : "custom",
+            orm: language === "ts" ? "prisma" : "none",
+            testing: apiTestingDefaults(language),
             auth: "jwt",
           },
         }
@@ -189,13 +257,18 @@ export function buildRecommendedManifest(
       authModel: projectType === "dashboard" ? "rbac" : "custom",
     },
     instructions: {
-      codingStyle: buildCodingStyle(projectType),
+      codingStyle: buildCodingStyle(projectType, language),
       reviewRules:
-        projectType === "api-service" || projectType === "cli-tool"
+        projectType === "api-service"
           ? [
               "Validate all request inputs at the handler level.",
               "Do not expose internal error details in responses.",
             ]
+          : projectType === "cli-tool"
+            ? [
+                "Keep command output stable and script-friendly.",
+                "Return actionable errors and meaningful exit codes.",
+              ]
           : projectType === "library"
             ? [
                 "Do not break the public API without a major version bump.",

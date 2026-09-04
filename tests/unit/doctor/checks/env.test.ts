@@ -7,11 +7,11 @@ describe("runEnvChecks", () => {
     expect(runEnvChecks(undefined)).toEqual([]);
   });
 
-  it("returns info when MCP presets are configured", () => {
+  it("returns empty when hosted OAuth presets do not require env vars", () => {
     const manifest = buildRecommendedManifest({ name: "test", framework: "react", projectType: "dashboard" });
-    manifest.generated.mcpPresets = ["fetch"];
+    manifest.generated.mcpPresets = ["github"];
     const findings = runEnvChecks(manifest);
-    expect(findings.some((f) => f.code === "env_placeholders_expected")).toBe(true);
+    expect(findings).toEqual([]);
   });
 
   it("returns empty when no MCP presets", () => {

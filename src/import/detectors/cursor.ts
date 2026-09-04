@@ -4,34 +4,42 @@ import type { DetectorResult, ImportFinding } from "../index.js";
 
 export async function detectCursor(cwd: string): Promise<DetectorResult> {
   const findings: ImportFinding[] = [];
+  const warnings: string[] = [];
+  let legacyFound = false;
+  let modernFound = false;
 
-  // Check .cursorrules first
   try {
     await stat(join(cwd, ".cursorrules"));
-    findings.push({
-      source: "cursor",
-      path: ".cursorrules",
-      field: "targets.cursor",
-      confidence: "high",
-      value: true,
-    });
-    return { findings, warnings: [], unsupported: [] };
-  } catch {
-    // Try .cursor/rules/ directory
-  }
-
-  try {
-    await stat(join(cwd, ".cursor", "rules"));
-    findings.push({
-      source: "cursor",
-      path: ".cursor/rules",
-      field: "targets.cursor",
-      confidence: "high",
-      value: true,
-    });
+    legacyFound = true;
   } catch {
     // Not found
   }
 
-  return { findings, warnings: [], unsupported: [] };
+  try {
+    await stat(join(cwd, ".cursor", "rules"));
+    modernFound = true;
+  } catch {
+    // Not found
+  }
+
+  if (legacyFound || modernFound) {
+    findings.push({
+      source: "cursor",
+      path: modernFound ? ".cursor/rules" : ".cursorrules",
+      field: "targets.cursor",
+      confidence: "high",
+      value: true,
+      ...(legacyFound && modernFound ? { note: "Found modern and legacy Cursor rules." } : {}),
+    });
+  }
+
+  if (legacyFound) {
+    warnings.push(
+      modernFound
+        ? "Legacy .cursorrules is present alongside .cursor/rules; review precedence before importing."
+        : "Legacy .cursorrules is present; migrate to .cursor/rules/*.mdc when practical.",
+    );
+  }
+
+  return { findings, warnings, unsupported: [] };
 }

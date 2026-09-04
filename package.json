@@ -1,12 +1,12 @@
 {
   "name": "agenv-cli",
-  "version": "2.7.0",
-  "description": "AI workspace control plane for web development repositories — one canonical manifest for Copilot, Claude, Codex, Cursor, Windsurf, and MCP.",
+  "version": "3.0.0",
+  "description": "Portable AI workspace control plane for software repositories — one manifest for Codex, Copilot, Claude, Cursor, Windsurf, and MCP.",
   "keywords": [
     "ai",
     "cli",
     "developer-tools",
-    "web-development",
+    "software-development",
     "mcp",
     "codex",
     "copilot",
@@ -44,20 +44,25 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "tsc --noEmit -p tsconfig.json",
+    "verify": "npm run typecheck && npm test && npm run build && npm audit --audit-level=high",
+    "prepublishOnly": "npm run verify",
     "start": "node dist/cli/index.js"
   },
   "engines": {
     "node": ">=20"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
-    "@inquirer/prompts": "^8.3.2",
-    "commander": "^13.1.0",
-    "yaml": "^2.8.3",
-    "zod": "^4.1.5"
+    "@inquirer/prompts": "^8.7.1",
+    "commander": "^14.0.3",
+    "yaml": "^2.9.0",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
-    "@types/node": "^24.0.0",
-    "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "@types/node": "^20.19.43",
+    "typescript": "^7.0.2",
+    "vitest": "^3.2.7"
   }
 }

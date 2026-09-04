@@ -167,18 +167,17 @@ For product intent:
 
 For architecture and module structure:
 
-- [trd.md](internal/trd.md)
+- [trd.md](trd.md) (historical architecture context)
 
 For exact contracts:
 
 - [cli-spec.md](cli-spec.md)
 - [manifest-spec.md](manifest-spec.md)
-- [output-map.md](output-map.md)
-- [adapter-contract.md](internal/adapter-contract.md)
+- [output-map.md](output-map.md) (current adapter destination contract)
 
-For the current work queue:
+For release and maintenance checks:
 
-- [implementation-plan.md](internal/implementation-plan.md)
+- [release-readiness.md](release-readiness.md)
 
 ## 8. Good First Contributions
 
