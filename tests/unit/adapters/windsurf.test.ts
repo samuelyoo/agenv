@@ -50,7 +50,7 @@ describe("windsurfAdapter", () => {
     const styleFile = files.find((f) => f.path === ".windsurf/rules/coding-style.md")!;
     const rendered = windsurfAdapter.render(styleFile, manifest);
     expect(rendered.content).toContain("trigger: glob");
-    expect(rendered.content).toContain("src/**/*.ts");
+    expect(rendered.content).toContain("**/*.{ts,tsx}");
   });
 
   it("renders code-review.md with trigger: manual", () => {

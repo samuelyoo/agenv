@@ -1,3 +1,6 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+
 export type DetectedFramework = "react" | "nextjs" | "vite-react" | "express" | "fastify" | "hono" | "koa" | "django" | "flask" | "fastapi" | "gin" | "echo" | "actix" | "axum" | "spring" | "rails" | "none";
 
 export function detectNonJsFramework(
@@ -66,6 +69,73 @@ export function detectFrameworkFromDependencies(
 
   if ("express" in dependencies) {
     return "express";
+  }
+
+  return undefined;
+}
+
+async function readDependencyFiles(cwd: string, fileNames: string[]): Promise<string> {
+  const contents = await Promise.all(
+    fileNames.map(async (fileName) => {
+      try {
+        return await readFile(join(cwd, fileName), "utf8");
+      } catch {
+        return "";
+      }
+    }),
+  );
+
+  return contents.join("\n").toLowerCase();
+}
+
+export async function detectFrameworkFromRepo(
+  cwd: string,
+  dependencies: Record<string, string>,
+  language: string,
+): Promise<DetectedFramework | undefined> {
+  const javascriptFramework = detectFrameworkFromDependencies(dependencies);
+  if (javascriptFramework) {
+    return javascriptFramework;
+  }
+
+  if (language === "python") {
+    const content = await readDependencyFiles(cwd, [
+      "pyproject.toml",
+      "requirements.txt",
+      "setup.py",
+      "Pipfile",
+    ]);
+    if (/\bdjango\b/.test(content)) return "django";
+    if (/\bfastapi\b/.test(content)) return "fastapi";
+    if (/\bflask\b/.test(content)) return "flask";
+  }
+
+  if (language === "go") {
+    const content = await readDependencyFiles(cwd, ["go.mod"]);
+    if (content.includes("github.com/gin-gonic/gin")) return "gin";
+    if (content.includes("github.com/labstack/echo")) return "echo";
+  }
+
+  if (language === "rust") {
+    const content = await readDependencyFiles(cwd, ["Cargo.toml"]);
+    if (/\bactix-web\b/.test(content)) return "actix";
+    if (/\baxum\b/.test(content)) return "axum";
+  }
+
+  if (language === "java") {
+    const content = await readDependencyFiles(cwd, [
+      "pom.xml",
+      "build.gradle",
+      "build.gradle.kts",
+    ]);
+    if (content.includes("springframework") || content.includes("spring-boot")) {
+      return "spring";
+    }
+  }
+
+  if (language === "ruby") {
+    const content = await readDependencyFiles(cwd, ["Gemfile"]);
+    if (/gem\s+["']rails["']/.test(content)) return "rails";
   }
 
   return undefined;

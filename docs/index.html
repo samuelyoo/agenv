@@ -1,7 +1,7 @@
 ---
 layout: default
 title: agenv | The Manifest Layer for AI-Native Repos
-description: Bootstrap a portable, reviewable AI workspace for web repositories with one canonical ai-workspace.json manifest.
+description: Bootstrap a portable, reviewable AI workspace for software repositories with one canonical ai-workspace.json manifest.
 ---
 
 <section class="hero" id="top">
@@ -15,7 +15,7 @@ description: Bootstrap a portable, reviewable AI workspace for web repositories 
     <p class="lede">
       Scan the repo, create <code>ai-workspace.json</code>, and generate the
       instruction files and tool config your project actually needs, without
-      hand-maintaining the same intent in four different places.
+      hand-maintaining the same intent in every tool.
     </p>
 
     <div class="cta-row">
@@ -95,7 +95,7 @@ $ agenv generate</code></pre>
             <a class="logo-item" href="https://claude.ai" target="_blank" rel="noopener">
               <img class="logo-icon" src="{{ site.baseurl }}/assets/img/claude.svg" alt="Claude" />
               <span class="logo-label">Claude</span>
-              <span class="logo-file">.claude &amp; .mcp.json</span>
+              <span class="logo-file">CLAUDE.md &amp; skills</span>
             </a>
             <a class="logo-item" href="https://cursor.com" target="_blank" rel="noopener">
               <img class="logo-icon" src="{{ site.baseurl }}/assets/img/cursor.svg" alt="Cursor" />
@@ -110,7 +110,7 @@ $ agenv generate</code></pre>
             <a class="logo-item" href="https://modelcontextprotocol.io" target="_blank" rel="noopener">
               <img class="logo-icon" src="{{ site.baseurl }}/assets/img/mcp.svg" alt="MCP" />
               <span class="logo-label">MCP</span>
-              <span class="logo-file">.mcp.json</span>
+              <span class="logo-file">native host config</span>
             </a>
           </div>
         </div>
@@ -144,8 +144,8 @@ $ agenv generate</code></pre>
       <p class="card-index">02</p>
       <h3>Generated outputs</h3>
       <p>
-        Create <code>AGENTS.md</code>, Copilot instructions, Claude files, and
-        MCP config from one plan.
+        Create native Codex, Copilot, Claude, Cursor, Windsurf, and MCP files
+        from one plan.
       </p>
     </article>
     <article class="overview-card">
@@ -207,8 +207,8 @@ $ agenv generate</code></pre>
     <article class="story-card">
       <h3>Keep tooling aligned</h3>
       <p>
-        Codex, Copilot, Claude, and MCP outputs come from one system instead of
-        separate rituals.
+        Codex, Copilot, Claude, Cursor, Windsurf, and MCP outputs come from one
+        system instead of separate rituals.
       </p>
     </article>
 
@@ -264,6 +264,8 @@ $ agenv generate</code></pre>
       <li>
         <code>agenv doctor</code> validates compatibility and manifest health.
       </li>
+      <li><code>agenv import</code> discovers existing modern and legacy configuration.</li>
+      <li><code>agenv audit</code> checks trust, provenance, and ownership.</li>
       <li><code>agenv templates list</code> shows starter templates.</li>
     </ul>
   </div>
@@ -306,7 +308,7 @@ $ agenv generate</code></pre>
     <article class="pill-card">
       <h3>MCP configuration</h3>
       <p>
-        Reviewable server presets — including Notion, Stripe, GitHub, and more — with trust-level annotations baked in.
+        Verified server presets — including Notion, Stripe, GitHub, and more — rendered in each host's native schema while trust metadata stays in agenv's audit layer.
       </p>
     </article>
     <article class="pill-card">
@@ -353,9 +355,9 @@ $ agenv generate</code></pre>
       </p>
     </article>
     <article class="pill-card">
-      <h3>Made for web repos</h3>
+      <h3>Made for software repos</h3>
       <p>
-        Supports 7 project types — dashboard, web-app, api-service, full-stack, library, cli-tool, and mobile — with stack-aware defaults.
+        Supports 7 project types, 7 languages, and 18 frameworks with stack-aware instructions and source globs.
       </p>
     </article>
   </div>

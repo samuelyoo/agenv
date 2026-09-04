@@ -1,6 +1,13 @@
 import type { Manifest } from "../../manifest/schema.js";
 import type { GenerationPlan, PlannedFile } from "../../planner/build-plan.js";
 import type { Adapter, RenderedFile, SupportResult } from "../types.js";
+import {
+  buildFrameworkGuidance,
+  buildLanguageGuidance,
+  describeLanguage,
+  describeProjectType,
+  sourceGlob,
+} from "../project-context.js";
 
 function supports(manifest: Manifest): SupportResult {
   return {
@@ -22,16 +29,6 @@ function plan(_manifest: Manifest, generationPlan: GenerationPlan): PlannedFile[
   return generationPlan.files.filter((file) => file.target === "windsurf");
 }
 
-function describeProjectType(manifest: Manifest): string {
-  if (manifest.project.type === "web-app") return "web application";
-  if (manifest.project.type === "api-service") return "API service";
-  if (manifest.project.type === "full-stack") return "full-stack application";
-  if (manifest.project.type === "library") return "library";
-  if (manifest.project.type === "cli-tool") return "CLI tool";
-  if (manifest.project.type === "mobile") return "mobile application";
-  return "dashboard";
-}
-
 function renderProjectContext(manifest: Manifest): string {
   const lines = [
     `---`,
@@ -40,13 +37,13 @@ function renderProjectContext(manifest: Manifest): string {
     ``,
     `# Project Context`,
     ``,
-    `This is the **${manifest.project.name}** ${manifest.project.framework} ${describeProjectType(manifest)} written in TypeScript.`,
+    `This is the **${manifest.project.name}** ${manifest.project.framework} ${describeProjectType(manifest)} written in ${describeLanguage(manifest)}.`,
     ``,
     `## Key Facts`,
     ``,
     `- **Framework:** ${manifest.project.framework}`,
     `- **Project type:** ${describeProjectType(manifest)}`,
-    `- **Language:** TypeScript (strict mode)`,
+    `- **Language:** ${describeLanguage(manifest)}`,
   ];
 
   if (manifest.conventions.accessibility) {
@@ -63,21 +60,15 @@ function renderProjectContext(manifest: Manifest): string {
 }
 
 function renderCodingStyle(manifest: Manifest): string {
-  const globs =
-    manifest.project.framework === "express" ||
-    manifest.project.framework === "fastify" ||
-    manifest.project.framework === "hono"
-      ? "src/**/*.ts"
-      : "src/**/*.{ts,tsx}";
-
   const lines = [
     `---`,
     `trigger: glob`,
-    `globs: ${globs}`,
+    `globs: ${JSON.stringify(sourceGlob(manifest))}`,
     `---`,
     ``,
     `# Coding Style`,
     ``,
+    ...buildLanguageGuidance(manifest).map((rule) => `- ${rule}`),
     ...manifest.instructions.codingStyle.map((rule) => `- ${rule}`),
   ];
 
@@ -86,43 +77,12 @@ function renderCodingStyle(manifest: Manifest): string {
 
 function renderFramework(manifest: Manifest): string {
   const fw = manifest.project.framework;
-  const frameworkGuidance: string[] = [];
-
-  switch (fw) {
-    case "nextjs":
-      frameworkGuidance.push(
-        "Use the App Router with server components by default. Only add `\"use client\"` for interactive components.",
-        "Keep data fetching in server components or route handlers.",
-        "Use `next/image` and `next/link` for images and navigation.",
-      );
-      break;
-    case "vite-react":
-      frameworkGuidance.push(
-        "Leverage Vite HMR. Lazy-import route-level components for code splitting.",
-        "Co-locate styles with components using Tailwind or CSS modules.",
-      );
-      break;
-    case "react":
-      frameworkGuidance.push("Prefer composition over inheritance. Lift state only when sibling components need it.");
-      break;
-    case "express":
-    case "fastify":
-    case "hono":
-      frameworkGuidance.push(
-        `Use ${fw} idioms for route handlers and middleware.`,
-        "Keep controllers thin — delegate business logic to service functions.",
-        "Validate all inputs at the handler boundary.",
-      );
-      break;
-  }
-
-  const globs =
-    fw === "express" || fw === "fastify" || fw === "hono" ? "src/**/*.ts" : "src/**/*.{ts,tsx}";
+  const frameworkGuidance = buildFrameworkGuidance(manifest);
 
   const lines = [
     `---`,
     `trigger: glob`,
-    `globs: ${globs}`,
+    `globs: ${JSON.stringify(sourceGlob(manifest))}`,
     `---`,
     ``,
     `# ${fw.charAt(0).toUpperCase()}${fw.slice(1)} Conventions`,

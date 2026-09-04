@@ -13,6 +13,13 @@ describe("withMarkdownGeneratedHeader", () => {
     const result = withMarkdownGeneratedHeader("# Title");
     expect(result).toBe(`<!-- ${GENERATED_NOTICE} -->\n\n# Title`);
   });
+
+  it("preserves YAML frontmatter as the first block", () => {
+    const result = withMarkdownGeneratedHeader("---\nname: example\n---\n\n# Title\n");
+    expect(result).toBe(
+      `---\nname: example\n---\n\n<!-- ${GENERATED_NOTICE} -->\n\n# Title\n`,
+    );
+  });
 });
 
 describe("withLineCommentHeader", () => {
@@ -64,6 +71,15 @@ describe("applyGeneratedHeader", () => {
 describe("hasGeneratedHeader", () => {
   it("detects markdown generated header", () => {
     expect(hasGeneratedHeader("file.md", `<!-- ${GENERATED_NOTICE} -->\n\nbody`)).toBe(true);
+  });
+
+  it("detects generated headers placed after YAML frontmatter", () => {
+    expect(
+      hasGeneratedHeader(
+        "SKILL.md",
+        `---\nname: example\n---\n\n<!-- ${GENERATED_NOTICE} -->\n\n# Title`,
+      ),
+    ).toBe(true);
   });
 
   it("detects line comment generated header", () => {

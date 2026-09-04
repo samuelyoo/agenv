@@ -1,97 +1,72 @@
-# Release Readiness — agenv
+# Release readiness
 
-## 1. Public Contract
+## Public contract
 
-agenv's public contract is defined across three pillars:
+agenv's public contract is defined by:
 
-1. **Manifest schema** — `src/manifest/schema.ts` (Zod). All valid manifests conform to this schema.
-2. **Output map** — `src/planner/output-map.ts`. Every generated file path, its target, layer, scope, and trust sensitivity is defined here.
-3. **CLI surface** — `src/cli/index.ts`. Commands: `init`, `generate`, `diff`, `doctor`, `templates list`.
+1. `src/manifest/schema.ts` — accepted manifests.
+2. `src/planner/output-map.ts` — generated destinations, scopes, and conditions.
+3. `src/cli/index.ts` and `src/cli/commands/` — commands and flags.
+4. `src/mcp/presets.ts` — supported preset IDs and verified provenance.
 
-Breaking changes to any of these require a major version bump.
+Removing or renaming fields, output paths, commands, or preset IDs requires a major package version and migration notes. `package.json` is the single package-version source.
 
-## 2. Versioning Source of Truth
+## Current output contract
 
-- `package.json` → `version` field is the **single source of truth**
-- The CLI reads version from `package.json` at runtime via `createRequire` (see `src/cli/index.ts`)
-- No hardcoded version strings exist anywhere else
-- CHANGELOG.md tracks all version history
+| Target | Files |
+| --- | --- |
+| Codex | `AGENTS.md`; `.codex/config.toml` for MCP |
+| GitHub Copilot | `.github/copilot-instructions.md`; `.vscode/mcp.json` for MCP |
+| Claude Code | `.claude/CLAUDE.md`, `.claude/skills/<name>/SKILL.md`, `.claude/agents/<name>.md`, local settings; `.mcp.json` for MCP |
+| Cursor | `.cursor/rules/*.mdc`; `.cursor/mcp.json` for MCP |
+| Windsurf | `.windsurf/rules/*.md`; user-level MCP installation warning |
 
-## 3. Generated Output Contract by Target
+See `doc/output-map.md` for conditions and shared/local scope.
 
-| Target | Files | Trust-Sensitive |
-|--------|-------|-----------------|
-| `codex` | `AGENTS.md` | No |
-| `copilot` | `.github/copilot-instructions.md` | No |
-| `claude` | `.claude/README.md`, `.claude/skills/*.md`, `.claude/agents/*.md`, `.claude/settings.local.json` | `settings.local.json` only |
-| `mcp` | `.mcp.json`, `.mcp.local.json` | Yes (both) |
-| `cursor` | `.cursor/rules/context.mdc`, `.cursor/rules/coding-style.mdc`, `.cursor/rules/framework.mdc`, `.cursor/rules/code-review.mdc` | No |
-| `windsurf` | `.windsurf/rules/context.md`, `.windsurf/rules/coding-style.md`, `.windsurf/rules/framework.md`, `.windsurf/rules/code-review.md` | No |
+## MCP trust model
 
-Additional shared outputs (all targets):
-- `ai-workspace.json` — canonical manifest (also accepted: `.yaml`, `.yml`)
-- `docs/ai-architecture.md` — shared conventions summary
-- `docs/ai-prompts/*.md` — prompt packs (when `generated.prompts = "pack"`)
-- `.env.example` — when MCP presets require env vars
+Every preset records a trust level, primary source URL, verification date, and native transport. This metadata is used by planning and audit but is not inserted into vendor config schemas.
 
-## 4. Security & Trust Model
+| Presets | Level | Meaning |
+| --- | --- | --- |
+| `memory`, `sequential-thinking` | safe | Low-risk reference utilities |
+| `github`, `linear`, `sentry`, `notion`, `stripe` | review | Hosted access to external account data |
+| `filesystem` | dangerous | Can read or write project files through a local process |
 
-### MCP Trust Levels
+Generated MCP files contain environment placeholders only. Literal secrets are prohibited. Users must still review OAuth permissions and local command execution before enabling a server.
 
-Every MCP preset in `src/mcp/presets.ts` has a `trustLevel`:
+## Automated gates
 
-| Level | Meaning | Scope |
-|-------|---------|-------|
-| `safe` | Read-only or low-risk | Shared (`.mcp.json`) |
-| `review` | Network access or data exposure | Shared with `_trustNote` annotation |
-| `dangerous` | File system write, code execution | Local only (`.mcp.local.json`) |
+`npm run verify` is the local release gate. It runs:
 
-Current preset trust assignments (15 presets):
+1. Type checking.
+2. The complete unit and integration suite.
+3. A production build.
+4. npm's high-severity dependency audit.
 
-| Preset | Trust Level |
-|--------|------------|
-| `brave-search`, `memory`, `sentry`, `notion`, `sequential-thinking` | safe |
-| `github`, `postgres`, `sqlite`, `fetch`, `slack`, `linear`, `stripe`, `atlassian` | review |
-| `filesystem`, `puppeteer` | dangerous |
+CI repeats the build, tests, and package dry-run on Node.js 20, 22, and 24. Publishing runs the same verification again before npm accepts a package.
 
-### Trust-Sensitive Outputs
+## Release checklist
 
-Files marked `trustSensitive: true` in the output map:
-- `.mcp.json` — shared MCP config (env var placeholders only, no secrets)
-- `.mcp.local.json` — local MCP overrides (may contain real credentials)
+- [ ] Version reflects SemVer impact.
+- [ ] Changelog includes breaking changes and migration notes.
+- [ ] README, manifest spec, CLI spec, and output map match source.
+- [ ] `npm run verify` passes.
+- [ ] `npm pack --dry-run` contains only intended `dist` files.
+- [ ] A temporary-project smoke test installs the packed tarball and runs `init`, `generate`, `doctor`, and `audit`.
+- [ ] Package version is unused on npm.
+- [ ] npm authentication or trusted publishing is available.
+- [ ] Git tag and GitHub release are created from the verified commit.
+- [ ] The installed npm package reports the released version and passes a smoke run.
 
-### Security Reporting
+## 2.x to 3.0 migration
 
-Vulnerabilities should be reported via GitHub Security Advisories:
-`https://github.com/samuelyoo/agenv/security/advisories/new`
+Version 3 corrects platform discovery paths and native MCP schemas, so it is intentionally a major release.
 
-See `SECURITY.md` for the full disclosure policy (3/7/30 day response timeline).
+- Regenerate Claude instructions from `.claude/README.md` to `.claude/CLAUDE.md`.
+- Regenerate Claude skills from `.claude/skills/<name>.md` to `.claude/skills/<name>/SKILL.md`.
+- Stop using `.mcp.local.json`; each enabled host now receives its own native MCP file.
+- Removed or deprecated MCP presets are rejected. Choose one of the currently verified catalog IDs.
+- Run `agenv import` before generation if the repository contains hand-written legacy files, then review `agenv diff --explain`.
 
-## 5. Release Checklist
-
-Before any release:
-
-- [ ] All tests pass: `npx vitest run`
-- [ ] Type check clean: `npx tsc --noEmit`
-- [ ] Build succeeds: `npx tsc -p tsconfig.json`
-- [ ] `package.json` version updated
-- [ ] CHANGELOG.md updated with all changes
-- [ ] README output table matches `src/planner/output-map.ts`
-- [ ] `doc/output-map.md` target sections match source
-- [ ] No hardcoded version strings (CLI reads from package.json)
-- [ ] `doctor --ci` exits clean on a freshly-generated workspace
-- [ ] Trust-sensitive files are correctly scoped (dangerous presets → local only)
-
-## 6. Breaking-Change Policy
-
-A breaking change is any modification to:
-
-1. Manifest schema field names or types (removals, renames, type changes)
-2. Generated file paths (moves, renames, deletions)
-3. CLI command names or required flag semantics
-4. MCP preset IDs (renames or removals)
-
-Breaking changes require:
-- Major version bump (semver)
-- CHANGELOG entry under `### Breaking Changes`
-- Migration notes if schema changes affect existing manifests
+The migration does not delete legacy files automatically. This avoids removing user-owned configuration during an upgrade.

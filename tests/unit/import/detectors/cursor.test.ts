@@ -36,4 +36,12 @@ describe("detectCursor", () => {
     expect(finding).toBeDefined();
     expect(finding!.confidence).toBe("high");
   });
+
+  it("prefers modern rules and warns when legacy rules also exist", async () => {
+    await writeFile(join(cwd, ".cursorrules"), "Legacy rules.\n");
+    await mkdir(join(cwd, ".cursor", "rules"), { recursive: true });
+    const result = await detectCursor(cwd);
+    expect(result.findings[0]?.path).toBe(".cursor/rules");
+    expect(result.warnings).toHaveLength(1);
+  });
 });

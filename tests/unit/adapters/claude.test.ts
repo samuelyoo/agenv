@@ -22,35 +22,35 @@ describe("claudeAdapter", () => {
     expect(files.every((f) => f.path.startsWith(".claude/"))).toBe(true);
   });
 
-  it("plan() includes .claude/README.md", () => {
+  it("plan() includes the discoverable Claude instructions file", () => {
     const manifest = dashboardManifest();
     const plan = buildGenerationPlan(manifest);
     const files = claudeAdapter.plan(manifest, plan);
-    expect(files.some((f) => f.path === ".claude/README.md")).toBe(true);
+    expect(files.some((f) => f.path === ".claude/CLAUDE.md")).toBe(true);
   });
 
-  it("renders README.md with project name and framework", () => {
+  it("renders CLAUDE.md with project name and framework", () => {
     const manifest = dashboardManifest();
     const plan = buildGenerationPlan(manifest);
-    const file = claudeAdapter.plan(manifest, plan).find((f) => f.path === ".claude/README.md")!;
+    const file = claudeAdapter.plan(manifest, plan).find((f) => f.path === ".claude/CLAUDE.md")!;
     const rendered = claudeAdapter.render(file, manifest);
     expect(rendered.content).toContain("test-dashboard");
     expect(rendered.content).toContain("nextjs");
-    expect(rendered.content).toContain("Claude Workspace");
+    expect(rendered.content).toContain("# test-dashboard");
   });
 
-  it("renders README.md with correct project type for web-app", () => {
+  it("renders CLAUDE.md with correct project type for web-app", () => {
     const manifest = webAppManifest();
     const plan = buildGenerationPlan(manifest);
-    const file = claudeAdapter.plan(manifest, plan).find((f) => f.path === ".claude/README.md")!;
+    const file = claudeAdapter.plan(manifest, plan).find((f) => f.path === ".claude/CLAUDE.md")!;
     const rendered = claudeAdapter.render(file, manifest);
     expect(rendered.content).toContain("web application");
   });
 
-  it("renders README.md with correct project type for api-service", () => {
+  it("renders CLAUDE.md with correct project type for api-service", () => {
     const manifest = apiServiceManifest();
     const plan = buildGenerationPlan(manifest);
-    const file = claudeAdapter.plan(manifest, plan).find((f) => f.path === ".claude/README.md")!;
+    const file = claudeAdapter.plan(manifest, plan).find((f) => f.path === ".claude/CLAUDE.md")!;
     const rendered = claudeAdapter.render(file, manifest);
     expect(rendered.content).toContain("API service");
   });
@@ -62,6 +62,8 @@ describe("claudeAdapter", () => {
     const skillFile = files.find((f) => f.path.includes("/skills/"))!;
     if (!skillFile) return;
     const rendered = claudeAdapter.render(skillFile, manifest);
+    expect(skillFile.path).toMatch(/\.claude\/skills\/[^/]+\/SKILL\.md$/);
+    expect(rendered.content).toMatch(/^---\nname: [a-z0-9-]+\ndescription: /);
     expect(rendered.content).toContain("## Goal");
     expect(rendered.content).toContain("## Project Context");
     expect(rendered.content).toContain("nextjs");
@@ -74,6 +76,7 @@ describe("claudeAdapter", () => {
     const agentFile = files.find((f) => f.path.includes("/agents/"))!;
     if (!agentFile) return;
     const rendered = claudeAdapter.render(agentFile, manifest);
+    expect(rendered.content).toMatch(/^---\nname: [a-z0-9-]+\ndescription: /);
     expect(rendered.content).toContain("## Role");
     expect(rendered.content).toContain("## Focus");
     expect(rendered.content).toContain("## Project Context");

@@ -1,6 +1,12 @@
 import type { Manifest } from "../../manifest/schema.js";
 import type { GenerationPlan, PlannedFile } from "../../planner/build-plan.js";
 import type { Adapter, RenderedFile, SupportResult } from "../types.js";
+import {
+  buildFrameworkGuidance,
+  buildLanguageGuidance,
+  describeLanguage,
+  describeProjectType,
+} from "../project-context.js";
 
 function supports(manifest: Manifest): SupportResult {
   return {
@@ -21,47 +27,12 @@ function plan(_manifest: Manifest, generationPlan: GenerationPlan): PlannedFile[
   return generationPlan.files.filter((file) => file.target === "codex");
 }
 
-function describeProjectType(manifest: Manifest): string {
-  if (manifest.project.type === "web-app") return "web application";
-  if (manifest.project.type === "api-service") return "API service";
-  if (manifest.project.type === "full-stack") return "full-stack application";
-  if (manifest.project.type === "library") return "library";
-  if (manifest.project.type === "cli-tool") return "CLI tool";
-  if (manifest.project.type === "mobile") return "mobile application";
-  return "dashboard";
-}
-
 function buildFrameworkSection(manifest: Manifest): string {
-  const lines: string[] = [`This is a ${manifest.project.framework} ${describeProjectType(manifest)} written in TypeScript.`];
-
-  switch (manifest.project.framework) {
-    case "nextjs":
-      lines.push(
-        "Use the App Router and server components by default. Only add `\"use client\"` when the component needs interactivity or browser APIs.",
-        "Keep data fetching in server components or route handlers. Avoid mixing client-side and server-side data loading in the same component.",
-        "Use `next/image` for images and `next/link` for internal navigation.",
-      );
-      break;
-    case "vite-react":
-      lines.push(
-        "The project uses Vite with React. Leverage fast HMR during development.",
-        "Keep route definitions centralized. Use lazy imports for route-level code splitting.",
-      );
-      break;
-    case "react":
-      lines.push(
-        "Follow standard React patterns: lift state only when siblings need it, prefer composition over inheritance, and keep components focused.",
-      );
-      break;
-    case "express":
-    case "fastify":
-    case "hono":
-      lines.push(
-        `Use ${manifest.project.framework} middleware and route handlers. Keep controllers thin — delegate business logic to service functions.`,
-        "Validate all request inputs at the handler boundary before passing to services.",
-      );
-      break;
-  }
+  const lines: string[] = [
+    `This is a ${manifest.project.framework} ${describeProjectType(manifest)} written in ${describeLanguage(manifest)}.`,
+    ...buildLanguageGuidance(manifest),
+    ...buildFrameworkGuidance(manifest),
+  ];
 
   return lines.join("\n");
 }

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { detectWindsurf } from "../../../../src/import/detectors/windsurf.js";
@@ -27,5 +27,12 @@ describe("detectWindsurf", () => {
     expect(finding).toBeDefined();
     expect(finding!.confidence).toBe("high");
     expect(finding!.value).toBe(true);
+  });
+
+  it("detects modern .windsurf/rules output", async () => {
+    await mkdir(join(cwd, ".windsurf", "rules"), { recursive: true });
+    const result = await detectWindsurf(cwd);
+    expect(result.findings[0]?.path).toBe(".windsurf/rules");
+    expect(result.findings[0]?.confidence).toBe("high");
   });
 });

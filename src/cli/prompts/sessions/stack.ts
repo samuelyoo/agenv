@@ -1,4 +1,5 @@
 import { select } from "@inquirer/prompts";
+import type { Framework } from "../../../manifest/schema.js";
 
 export const stackSession = {
   id: "stack",
@@ -16,19 +17,34 @@ const BACKEND_FRAMEWORKS = [
   { name: "Express", value: "express" as const },
   { name: "Fastify", value: "fastify" as const },
   { name: "Hono", value: "hono" as const },
+  { name: "Koa", value: "koa" as const },
+  { name: "Django", value: "django" as const },
+  { name: "Flask", value: "flask" as const },
+  { name: "FastAPI", value: "fastapi" as const },
+  { name: "Gin", value: "gin" as const },
+  { name: "Echo", value: "echo" as const },
+  { name: "Actix Web", value: "actix" as const },
+  { name: "Axum", value: "axum" as const },
+  { name: "Spring", value: "spring" as const },
+  { name: "Rails", value: "rails" as const },
 ];
+
+const GENERIC_FRAMEWORKS = [{ name: "No framework", value: "none" as const }];
 
 export async function runStackPrompt(
   detected?: string,
   projectType?: string,
-): Promise<"react" | "nextjs" | "vite-react" | "express" | "fastify" | "hono"> {
+): Promise<Framework> {
   const isApi = projectType === "api-service";
-  const choices = isApi ? BACKEND_FRAMEWORKS : FRONTEND_FRAMEWORKS;
-  const defaultValue = isApi
-    ? ("express" as const)
-    : ((detected ?? "react") as "react" | "nextjs" | "vite-react");
+  const isGeneric = projectType === "library" || projectType === "cli-tool";
+  const choices = isApi ? BACKEND_FRAMEWORKS : isGeneric ? GENERIC_FRAMEWORKS : FRONTEND_FRAMEWORKS;
+  const values = choices.map((choice) => choice.value as Framework);
+  const fallback: Framework = isApi ? "express" : isGeneric ? "none" : "react";
+  const defaultValue = detected && values.includes(detected as Framework)
+    ? detected as Framework
+    : fallback;
 
-  return select({
+  return select<Framework>({
     message: detected
       ? `Detected framework: ${detected}. Confirm or change:`
       : `Which framework does this project use?`,

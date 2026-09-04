@@ -75,4 +75,30 @@ describe("inspectRepo", () => {
     expect(inspection.packageManager).toBeUndefined();
     expect(inspection.existingAiFiles).toEqual([]);
   });
+
+  it("connects Python dependency files to framework detection", async () => {
+    const cwd = await makeTempRepo();
+    await writeFile(
+      join(cwd, "pyproject.toml"),
+      '[project]\nname = "python-api"\ndependencies = ["fastapi>=0.115"]\n',
+    );
+
+    const inspection = await inspectRepo(cwd);
+
+    expect(inspection.language).toBe("python");
+    expect(inspection.framework).toBe("fastapi");
+  });
+
+  it("connects Go modules to framework detection", async () => {
+    const cwd = await makeTempRepo();
+    await writeFile(
+      join(cwd, "go.mod"),
+      "module example.com/service\n\nrequire github.com/gin-gonic/gin v1.10.0\n",
+    );
+
+    const inspection = await inspectRepo(cwd);
+
+    expect(inspection.language).toBe("go");
+    expect(inspection.framework).toBe("gin");
+  });
 });

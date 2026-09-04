@@ -2,6 +2,12 @@ import type { Manifest } from "../../manifest/schema.js";
 import type { GenerationPlan, PlannedFile } from "../../planner/build-plan.js";
 import { formatJson } from "../../utils/json.js";
 import type { Adapter, RenderedFile, SupportResult } from "../types.js";
+import {
+  buildFrameworkGuidance,
+  buildLanguageGuidance,
+  describeLanguage,
+  describeProjectType,
+} from "../project-context.js";
 
 function supports(manifest: Manifest): SupportResult {
   return {
@@ -22,30 +28,20 @@ function plan(_manifest: Manifest, generationPlan: GenerationPlan): PlannedFile[
   return generationPlan.files.filter((file) => file.target === "claude");
 }
 
-function describeProjectType(manifest: Manifest): string {
-  if (manifest.project.type === "web-app") return "web application";
-  if (manifest.project.type === "api-service") return "API service";
-  if (manifest.project.type === "full-stack") return "full-stack application";
-  if (manifest.project.type === "library") return "library";
-  if (manifest.project.type === "cli-tool") return "CLI tool";
-  if (manifest.project.type === "mobile") return "mobile application";
-  return "dashboard";
-}
-
-function renderReadme(manifest: Manifest): string {
+function renderInstructions(manifest: Manifest): string {
   const enabledTargets = Object.entries(manifest.targets)
     .filter(([, enabled]) => enabled)
     .map(([target]) => target);
 
   const sections = [
-    `# Claude Workspace`,
+    `# ${manifest.project.name}`,
     ``,
     `## Project`,
     ``,
     `- **Name:** ${manifest.project.name}`,
     `- **Type:** ${describeProjectType(manifest)}`,
     `- **Framework:** ${manifest.project.framework}`,
-    `- **Language:** TypeScript`,
+    `- **Language:** ${describeLanguage(manifest)}`,
     `- **Targets:** ${enabledTargets.join(", ")}`,
     ``,
   ];
@@ -65,6 +61,11 @@ function renderReadme(manifest: Manifest): string {
   }
 
   sections.push(
+    `## Language and Framework`,
+    ``,
+    ...buildLanguageGuidance(manifest).map((rule) => `- ${rule}`),
+    ...buildFrameworkGuidance(manifest).map((rule) => `- ${rule}`),
+    ``,
     `## Coding Style`,
     ``,
     ...manifest.instructions.codingStyle.map((rule) => `- ${rule}`),
@@ -351,6 +352,11 @@ function renderSkill(skillName: string, manifest: Manifest): string {
   const title = skillName.split("-").map(titleCase).join(" ");
 
   const sections = [
+    `---`,
+    `name: ${skillName}`,
+    `description: ${JSON.stringify(desc ? `${desc.goal} Use when ${desc.when}` : `Reusable guidance for ${manifest.project.name}.`)}`,
+    `---`,
+    ``,
     `# ${title}`,
     ``,
     ...(desc
@@ -360,6 +366,7 @@ function renderSkill(skillName: string, manifest: Manifest): string {
     ``,
     `- Framework: ${manifest.project.framework}`,
     `- Project type: ${describeProjectType(manifest)}`,
+    `- Language: ${describeLanguage(manifest)}`,
     ``,
     `## Coding Style`,
     ``,
@@ -375,6 +382,11 @@ function renderAgent(agentName: string, manifest: Manifest): string {
   const title = agentName.split("-").map(titleCase).join(" ");
 
   const sections = [
+    `---`,
+    `name: ${agentName}`,
+    `description: ${JSON.stringify(desc?.role ?? `Specialized agent for ${manifest.project.name}.`)}`,
+    `---`,
+    ``,
     `# ${title}`,
     ``,
     ...(desc
@@ -384,6 +396,7 @@ function renderAgent(agentName: string, manifest: Manifest): string {
     ``,
     `- Framework: ${manifest.project.framework}`,
     `- Project type: ${describeProjectType(manifest)}`,
+    `- Language: ${describeLanguage(manifest)}`,
     ``,
     `## Review Rules`,
     ``,
@@ -395,18 +408,23 @@ function renderAgent(agentName: string, manifest: Manifest): string {
 }
 
 function renderMarkdownForPath(file: PlannedFile, manifest: Manifest): string {
-  if (file.path === ".claude/README.md") {
-    return renderReadme(manifest);
+  if (file.path === ".claude/CLAUDE.md") {
+    return renderInstructions(manifest);
   }
 
-  if (file.path.includes("/skills/")) {
-    const skillName = file.path.split("/").pop()?.replace(".md", "") ?? "skill";
+  if (file.path.endsWith("/SKILL.md")) {
+    const segments = file.path.split("/");
+    const skillName = segments.at(-2) ?? "skill";
     return renderSkill(skillName, manifest);
   }
 
   if (file.path.includes("/agents/")) {
     const agentName = file.path.split("/").pop()?.replace(".md", "") ?? "agent";
     return renderAgent(agentName, manifest);
+  }
+
+  if (file.path === ".claude/settings.local.json") {
+    return formatJson({});
   }
 
   return formatJson({

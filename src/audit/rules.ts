@@ -4,7 +4,7 @@ import type { Manifest } from "../manifest/schema.js";
 import { getPresetById } from "../mcp/presets.js";
 import type { DiagnosticFinding } from "../doctor/types.js";
 
-const DANGEROUS_PRESET_IDS = new Set(["filesystem", "puppeteer"]);
+const DANGEROUS_PRESET_IDS = new Set(["filesystem"]);
 
 export function checkMcpTrustLevels(manifest: Manifest): DiagnosticFinding[] {
   const findings: DiagnosticFinding[] = [];

@@ -27,12 +27,27 @@ export function buildWarnings(manifest: Manifest): WarningMessage[] {
     });
   }
 
-  if (manifest.setup.scope === "shared" && manifest.targets.mcp) {
+  if (
+    manifest.targets.mcp &&
+    !manifest.targets.claude &&
+    !manifest.targets.codex &&
+    !manifest.targets.copilot &&
+    manifest.targets.cursor !== true
+  ) {
     warnings.push({
       severity: "warning",
-      code: "shared_scope_with_mcp",
+      code: "mcp_no_project_scoped_host",
       message:
-        "Shared-only scope with MCP may still require a local override file for machine-specific values.",
+        "MCP is enabled, but none of the selected targets has a generated project-scoped MCP format.",
+    });
+  }
+
+  if (manifest.targets.mcp && manifest.targets.windsurf === true) {
+    warnings.push({
+      severity: "warning",
+      code: "windsurf_mcp_requires_user_install",
+      message:
+        "Windsurf MCP configuration is user-scoped, so agenv does not write it into the repository. Install the selected servers through Windsurf settings.",
     });
   }
 

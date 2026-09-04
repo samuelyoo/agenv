@@ -1,121 +1,99 @@
 # agenv
 
 [![npm version](https://img.shields.io/npm/v/agenv-cli.svg)](https://www.npmjs.com/package/agenv-cli)
+[![CI](https://github.com/samuelyoo/agenv/actions/workflows/ci.yml/badge.svg)](https://github.com/samuelyoo/agenv/actions/workflows/ci.yml)
 [![license](https://img.shields.io/npm/l/agenv-cli.svg)](LICENSE)
 
-The AI workspace control plane for web development repositories — one canonical manifest for Copilot, Claude, Codex, MCP, Cursor, and Windsurf.
+The portable AI-workspace control plane for software repositories. Define one reviewable `ai-workspace.json`, then generate native instructions for Codex, GitHub Copilot, Claude Code, Cursor, Windsurf, and MCP clients.
 
-Define one canonical `ai-workspace.json` as the source of truth for your AI workspace configuration, generate tool-specific files for all six targets, and import existing AI configs from any tool you already use.
+agenv supports seven project types, seven languages, and eighteen frameworks. It can also import existing agent configuration, manage reusable packs, audit workspace safety, and explain planned changes.
 
-## Quick Start
+## Quick start
+
+Requires Node.js 20 or newer.
 
 ```bash
-# Install once:
 npm install -g agenv-cli
 
-# Then in any web project directory:
+cd your-project
 agenv init --yes
 agenv generate
+agenv doctor
 ```
 
-That's it. `agenv` inspects your repo, creates `ai-workspace.json`, and generates tool-specific files for your enabled targets.
-
-## What It Does
-
-1. **Inspects** your repo — detects framework, package manager, existing AI config files
-2. **Creates** `ai-workspace.json` — a single manifest describing your AI workspace
-3. **Plans** which files to generate based on your targets and setup mode
-4. **Generates** shared docs, prompts, and tool-specific files (AGENTS.md, copilot-instructions, .claude/, .mcp.json)
-
-Supports seven project types: `dashboard`, `web-app`, `api-service`, `full-stack`, `library`, `cli-tool`, and `mobile`.
-
-## Install
-
-```bash
-npm install -g agenv-cli
-agenv --help
-```
+`agenv init` inspects the repository and creates the canonical manifest. Generated files carry ownership metadata, hand-edited files are protected unless `--force` is used, and replacements are backed up in `.agenv-backups/`.
 
 ## Commands
 
-| Command | Description |
-|---|---|
-| `agenv init` | Create `ai-workspace.json` from repo inspection + interactive prompts |
-| `agenv init --yes` | Non-interactive mode with recommended defaults |
-| `agenv generate` | Generate all planned files from the manifest |
-| `agenv generate --dry-run` | Preview what would be generated without writing |
-| `agenv generate --force` | Overwrite files modified outside agenv |
-| `agenv diff` | Show what `generate` would change |
-| `agenv doctor` | Validate manifest and repo compatibility |
-| `agenv templates list` | List available starter templates |
+| Command | Purpose |
+| --- | --- |
+| `agenv init` | Inspect a repository and create `ai-workspace.json` |
+| `agenv import` | Report on existing AI configuration; add `--write` to create a manifest |
+| `agenv generate` | Generate enabled platform files; supports `--dry-run`, `--watch`, and filters |
+| `agenv diff --explain` | Preview changes and show why each file is planned |
+| `agenv doctor` | Validate the manifest, generated files, and platform configuration |
+| `agenv audit` | Check MCP trust, environment variables, pack provenance, and file ownership |
+| `agenv add pack <id>` | Add a built-in reusable policy pack |
+| `agenv add preset <id>` | Add a verified MCP preset |
+| `agenv install` | Resolve packs and write `ai-workspace.lock` |
+| `agenv pack <dir>` | Validate a local pack |
+| `agenv templates list` | List starter templates |
+| `agenv update` | Update the global CLI from npm |
 
-## How It Works
+Use `agenv <command> --help` for the complete flag reference.
 
-```
-agenv init          →  ai-workspace.json (your manifest)
-agenv generate      →  AGENTS.md, .github/copilot-instructions.md,
-                       .claude/*, .mcp.json, docs/ai-prompts/*
-agenv diff          →  preview changes before writing
-agenv doctor        →  validate everything is consistent
-```
+## Supported projects
 
-Generated files include a header comment so agenv knows which files it manages. Files you edit by hand are protected from overwrite (unless you use `--force`). Backups are created in `.agenv-backups/` before any overwrite.
+- Project types: `dashboard`, `web-app`, `api-service`, `full-stack`, `library`, `cli-tool`, `mobile`
+- Languages: `ts`, `python`, `go`, `rust`, `java`, `ruby`, `other`
+- Frameworks: `react`, `nextjs`, `vite-react`, `express`, `fastify`, `hono`, `koa`, `django`, `flask`, `fastapi`, `gin`, `echo`, `actix`, `axum`, `spring`, `rails`, `none`
 
-## Supported Targets
+Repository inspection reads the matching dependency files, including `package.json`, `pyproject.toml`, `requirements.txt`, `go.mod`, `Cargo.toml`, Maven/Gradle files, and `Gemfile`.
 
-| Target | Output |
-|---|---|
-| `codex` | `AGENTS.md` |
-| `copilot` | `.github/copilot-instructions.md` |
-| `claude` | `.claude/README.md`, `.claude/skills/*.md`, `.claude/agents/*.md`, `.claude/settings.local.json` |
-| `mcp` | `.mcp.json`, `.mcp.local.json` |
-| `cursor` | `.cursor/rules/context.mdc`, `.cursor/rules/coding-style.mdc`, `.cursor/rules/framework.mdc`, `.cursor/rules/code-review.mdc` |
-| `windsurf` | `.windsurf/rules/context.md`, `.windsurf/rules/coding-style.md`, `.windsurf/rules/framework.md`, `.windsurf/rules/code-review.md` |
+## Generated platform files
 
-## Project Types
+| Platform | Native output |
+| --- | --- |
+| Codex | `AGENTS.md` |
+| GitHub Copilot | `.github/copilot-instructions.md` |
+| Claude Code | `.claude/CLAUDE.md`, `.claude/skills/<name>/SKILL.md`, `.claude/agents/<name>.md`, `.claude/settings.local.json` |
+| Cursor | `.cursor/rules/*.mdc` and `.cursor/mcp.json` when MCP is enabled |
+| Windsurf | `.windsurf/rules/*.md`; its MCP server list must currently be installed in the user's Windsurf configuration |
+| MCP for Claude Code | `.mcp.json` |
+| MCP for Codex | `.codex/config.toml` |
+| MCP for VS Code/Copilot | `.vscode/mcp.json` |
 
-| Type | Description |
-|---|---|
-| `dashboard` | Internal data/admin dashboard |
-| `web-app` | Consumer-facing web application |
-| `api-service` | Backend API service |
-| `full-stack` | Combined frontend + backend (e.g. Next.js full-stack) |
-| `library` | Reusable npm package or component library |
-| `cli-tool` | Node.js command-line tool |
-| `mobile` | React Native / Expo mobile app |
+Claude skills and agents include the frontmatter their discovery systems require. Cursor and Windsurf rules use language-specific source globs rather than assuming TypeScript.
 
-## MCP Presets
+## MCP presets
 
-Built-in presets with trust annotations: `filesystem`, `github`, `fetch`, `memory`, `postgres`, `sqlite`, `puppeteer`, `sequential-thinking`, `notion`, `stripe`, `atlassian`.
+The built-in catalog contains only endpoints or packages verified from their current primary documentation:
 
-Select presets during `agenv init` or add them to `generated.mcpPresets` in your manifest. Non-safe presets include `_trustLevel` and `_trustNote` annotations in `.mcp.json`.
+- Hosted OAuth servers: `github`, `linear`, `sentry`, `notion`, `stripe`
+- Maintained reference packages: `filesystem`, `memory`, `sequential-thinking`
+
+agenv renders each client's native schema and environment-variable syntax. Trust and provenance stay in the manifest/audit layer instead of adding unsupported keys to vendor config files. Review every server's permissions before enabling it, especially the write-capable `filesystem` preset.
 
 ## Documentation
 
-| Doc | Purpose |
-|---|---|
-| [Getting Started](doc/getting-started.md) | Contributor onboarding |
-| [Product Requirements](doc/prd.md) | Product goals and scope |
-| [Technical Requirements](doc/internal/trd.md) | Architecture and technical design |
-| [CLI Spec](doc/cli-spec.md) | Command contract and flag reference |
-| [Manifest Spec](doc/manifest-spec.md) | Manifest schema and field definitions |
-| [Output Map](doc/output-map.md) | Which files are generated and when |
-| [Adapter Contract](doc/internal/adapter-contract.md) | How adapters work |
+| Document | Purpose |
+| --- | --- |
+| [Getting started](doc/getting-started.md) | Contributor setup and project tour |
+| [CLI specification](doc/cli-spec.md) | Current command and flag contract |
+| [Manifest specification](doc/manifest-spec.md) | Schema v2 fields and normalization |
+| [Output map](doc/output-map.md) | Generated destinations and conditions |
+| [Release readiness](doc/release-readiness.md) | Versioning, security, and release checks |
+| [Product requirements](doc/prd.md) | Historical product design context |
+| [Technical requirements](doc/trd.md) | Historical architecture context |
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, development commands, and PR guidelines.
-
-## Security
-
-See [SECURITY.md](SECURITY.md) for the vulnerability reporting policy.
+## Development
 
 ```bash
 npm install
-npm run build
-npm test
-npm run typecheck
+npm run verify
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and [SECURITY.md](SECURITY.md) for private vulnerability reporting.
 
 ## License
 

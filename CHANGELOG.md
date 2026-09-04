@@ -9,6 +9,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No unreleased changes._
 
+## [3.0.0] - 2026-09-04
+
+### Added
+
+- Native, host-specific MCP output for Claude Code (`.mcp.json`), Codex (`.codex/config.toml`), Cursor (`.cursor/mcp.json`), and GitHub Copilot/VS Code (`.vscode/mcp.json`).
+- Verified MCP preset provenance with primary source URLs, verification dates, and explicit `stdio` or HTTP transports.
+- Language- and framework-aware instruction rendering across all seven languages and eighteen frameworks.
+- Repository-level framework inspection for Python, Go, Rust, Java, and Ruby dependency files.
+- End-to-end platform conformance coverage for Claude instructions, skills, agents, Cursor/Windsurf rules, and each MCP schema.
+- Node.js 20/22/24 CI coverage, package dry-run checks, dependency auditing, and an npm trusted-publishing workflow.
+
+### Changed
+
+- Claude Code now receives discoverable `.claude/CLAUDE.md` instructions, skill directories with `SKILL.md`, and valid agent/skill YAML frontmatter.
+- Cursor and Windsurf rules now use source globs and conventions derived from the configured language instead of assuming TypeScript.
+- Non-JavaScript backend frameworks infer an API-service project and language-appropriate testing defaults.
+- Dependencies were upgraded to supported current releases; the high-severity npm audit is clean.
+- Public documentation now reflects the complete command surface and current generated paths.
+
+### Fixed
+
+- Generated ownership comments now preserve YAML frontmatter as the first document block.
+- Import recognizes current Claude, Cursor, Windsurf, and host-specific MCP files while retaining explicit legacy warnings.
+- Doctor validates the actual schema for every generated MCP host file.
+- Unsupported custom trust keys are no longer injected into vendor MCP configuration.
+- Removed and deprecated MCP entries no longer appear as selectable built-in presets.
+
+### Breaking Changes
+
+- Claude instructions moved from `.claude/README.md` to `.claude/CLAUDE.md`.
+- Claude skills moved from `.claude/skills/<name>.md` to `.claude/skills/<name>/SKILL.md`.
+- `.mcp.local.json` was removed in favor of each host's native project configuration.
+- The built-in MCP catalog now contains only `github`, `filesystem`, `memory`, `linear`, `sentry`, `notion`, `stripe`, and `sequential-thinking`.
+
+### Migration
+
+- Run `agenv import`, review `agenv diff --explain`, and then run `agenv generate`.
+- Legacy files are not deleted automatically; remove them manually after confirming the native replacement works in each tool.
+- Repository milestones 2.3.0 through 2.7.0 were not published to npm; 3.0.0 is the next registry release after 2.2.0.
+
 ## [2.7.0] - 2026-03-31
 
 ### Added

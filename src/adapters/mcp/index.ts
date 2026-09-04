@@ -1,27 +1,47 @@
 import type { Manifest } from "../../manifest/schema.js";
+import { getPresetById, type McpPreset } from "../../mcp/presets.js";
 import type { GenerationPlan, PlannedFile } from "../../planner/build-plan.js";
 import { formatJson } from "../../utils/json.js";
 import type { Adapter, RenderedFile, SupportResult } from "../types.js";
-import { getPresetById, type McpPreset } from "../../mcp/presets.js";
 
 function supports(manifest: Manifest): SupportResult {
+  if (!manifest.targets.mcp) {
+    return {
+      supported: false,
+      issues: [
+        {
+          severity: "warning",
+          code: "mcp_target_disabled",
+          message: "MCP output is disabled in the manifest targets.",
+        },
+      ],
+    };
+  }
+
+  const hasProjectScopedHost =
+    manifest.targets.claude ||
+    manifest.targets.codex ||
+    manifest.targets.copilot ||
+    manifest.targets.cursor === true;
+
   return {
-    supported: manifest.targets.mcp,
-    issues: manifest.targets.mcp
-      ? [
-          {
-            severity: "warning",
-            code: "mcp_requires_review",
-            message: "MCP configs are trust-sensitive and should be reviewed before use.",
-          },
-        ]
-      : [
-          {
-            severity: "warning",
-            code: "mcp_target_disabled",
-            message: "MCP output is disabled in the manifest targets.",
-          },
-        ],
+    supported: true,
+    issues: [
+      {
+        severity: "warning",
+        code: "mcp_requires_review",
+        message: "MCP configs can start local commands or access remote services. Review every generated server before use.",
+      },
+      ...(!hasProjectScopedHost
+        ? [
+            {
+              severity: "warning" as const,
+              code: "mcp_no_project_scoped_host",
+              message: "None of the selected coding-agent targets has a generated project-scoped MCP configuration.",
+            },
+          ]
+        : []),
+    ],
   };
 }
 
@@ -29,45 +49,96 @@ function plan(_manifest: Manifest, generationPlan: GenerationPlan): PlannedFile[
   return generationPlan.files.filter((file) => file.target === "mcp");
 }
 
-function buildMcpServers(presets: McpPreset[]): Record<string, unknown> {
+function resolvedPresets(manifest: Manifest): McpPreset[] {
+  return manifest.generated.mcpPresets
+    .map((id) => getPresetById(id))
+    .filter((preset): preset is McpPreset => preset !== undefined);
+}
+
+type JsonDialect = "claude" | "cursor" | "vscode";
+
+function renderEnvValue(key: string, dialect: JsonDialect): string {
+  return dialect === "claude" ? `\${${key}}` : `\${env:${key}}`;
+}
+
+function buildJsonServers(presets: McpPreset[], dialect: JsonDialect): Record<string, unknown> {
   const servers: Record<string, unknown> = {};
+
   for (const preset of presets) {
-    const entry: Record<string, unknown> = {
+    if (preset.transport === "http") {
+      servers[preset.id] = {
+        type: "http",
+        url: preset.url,
+      };
+      continue;
+    }
+
+    const envKeys = Object.keys(preset.env);
+    servers[preset.id] = {
+      type: "stdio",
       command: preset.command,
       args: preset.args,
-      ...(Object.keys(preset.env).length > 0 ? { env: preset.env } : {}),
+      ...(envKeys.length > 0
+        ? {
+            env: Object.fromEntries(
+              envKeys.map((key) => [key, renderEnvValue(key, dialect)]),
+            ),
+          }
+        : {}),
     };
-    if (preset.trustLevel !== "safe") {
-      entry._trustLevel = preset.trustLevel;
-      entry._trustNote =
-        preset.trustLevel === "dangerous"
-          ? "This server can read/write the local filesystem or execute arbitrary actions. Review carefully before enabling."
-          : "This server has access to external services or credentials. Review env vars and permissions before enabling.";
-    }
-    servers[preset.id] = entry;
   }
+
   return servers;
 }
 
-function render(file: PlannedFile, manifest: Manifest): RenderedFile {
-  if (file.path === ".mcp.local.json") {
-    return {
-      path: file.path,
-      trustSensitive: file.trustSensitive,
-      content: formatJson({}),
-    };
-  }
+function renderCodexToml(presets: McpPreset[]): string {
+  const sections = presets.map((preset) => {
+    const lines = [`[mcp_servers.${JSON.stringify(preset.id)}]`];
+    if (preset.transport === "http") {
+      lines.push(`url = ${JSON.stringify(preset.url)}`);
+    } else {
+      lines.push(
+        `command = ${JSON.stringify(preset.command)}`,
+        `args = [${preset.args.map((arg) => JSON.stringify(arg)).join(", ")}]`,
+      );
+      const envKeys = Object.keys(preset.env);
+      if (envKeys.length > 0) {
+        lines.push(`env_vars = [${envKeys.map((key) => JSON.stringify(key)).join(", ")}]`);
+      }
+    }
+    return lines.join("\n");
+  });
 
-  const resolvedPresets = manifest.generated.mcpPresets
-    .map((id) => getPresetById(id))
-    .filter((p): p is McpPreset => p !== undefined);
+  return sections.length > 0
+    ? `# Generated by agenv. Review every MCP server before enabling it.\n\n${sections.join("\n\n")}\n`
+    : "# Generated by agenv. No MCP presets selected.\n\n[mcp_servers]\n";
+}
+
+function render(file: PlannedFile, manifest: Manifest): RenderedFile {
+  const presets = resolvedPresets(manifest);
+  let content: string;
+
+  switch (file.path) {
+    case ".mcp.json":
+      content = formatJson({ mcpServers: buildJsonServers(presets, "claude") });
+      break;
+    case ".cursor/mcp.json":
+      content = formatJson({ mcpServers: buildJsonServers(presets, "cursor") });
+      break;
+    case ".vscode/mcp.json":
+      content = formatJson({ servers: buildJsonServers(presets, "vscode") });
+      break;
+    case ".codex/config.toml":
+      content = renderCodexToml(presets);
+      break;
+    default:
+      throw new Error(`Unsupported MCP output path '${file.path}'.`);
+  }
 
   return {
     path: file.path,
     trustSensitive: file.trustSensitive,
-    content: formatJson({
-      mcpServers: buildMcpServers(resolvedPresets),
-    }),
+    content,
   };
 }
 

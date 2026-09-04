@@ -25,7 +25,7 @@ export function createCli(): Command {
   program
     .name("agenv")
     .description(
-      "Bootstrap a portable, reviewable AI workspace for web development repositories.",
+      "Bootstrap a portable, reviewable AI workspace for software repositories.",
     )
     .version(pkg.version);
 

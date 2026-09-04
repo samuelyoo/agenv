@@ -2,10 +2,14 @@ import { Command } from "commander";
 import { confirm } from "@inquirer/prompts";
 import { InvalidOptionError } from "../../errors.js";
 import { inspectRepo } from "../../detect/repo-inspector.js";
-import { buildRecommendedManifest } from "../../manifest/defaults.js";
+import {
+  buildRecommendedManifest,
+  inferProjectTypeForFramework,
+} from "../../manifest/defaults.js";
 import { saveManifest } from "../../manifest/save.js";
 import type {
   Framework,
+  Language,
   ProjectType,
   PromptMode,
   SetupDepth,
@@ -14,6 +18,7 @@ import type {
 } from "../../manifest/schema.js";
 import {
   frameworkSchema,
+  languageSchema,
   setupDepthSchema,
   setupModeSchema,
   setupScopeSchema,
@@ -31,6 +36,7 @@ type InitOptions = {
   targets?: string;
   projectType?: string;
   framework?: Framework;
+  language?: Language;
   setupDepth?: SetupDepth;
   setupMode?: SetupMode;
   configScope?: SetupScope;
@@ -88,8 +94,9 @@ export function registerInitCommand(program: Command): void {
     .option("--dry-run", "preview without writing files")
     .option("--json", "emit machine-readable output")
     .option("--targets <list>", "comma-separated targets such as codex,claude,copilot,mcp")
-    .option("--project-type <type>", "project type: dashboard, web-app, or api-service", "dashboard")
+    .option("--project-type <type>", "project type: dashboard, web-app, api-service, full-stack, library, cli-tool, or mobile")
     .option("--framework <value>", "override detected framework")
+    .option("--language <value>", "override detected language")
     .option("--setup-depth <value>", "recommended, semi-custom, or advanced")
     .option("--setup-mode <value>", "base, skills, agents, or full")
     .option("--config-scope <value>", "shared, local, or mixed")
@@ -102,6 +109,9 @@ export function registerInitCommand(program: Command): void {
       if (options.framework !== undefined) {
         validateOptionEnum("--framework", options.framework, frameworkSchema);
       }
+      if (options.language !== undefined) {
+        validateOptionEnum("--language", options.language, languageSchema);
+      }
       validateOptionEnum("--setup-depth", options.setupDepth, setupDepthSchema);
       validateOptionEnum("--setup-mode", options.setupMode, setupModeSchema);
       validateOptionEnum("--config-scope", options.configScope, setupScopeSchema);
@@ -113,14 +123,19 @@ export function registerInitCommand(program: Command): void {
 
       if (options.yes) {
         // Non-interactive: use CLI flags + defaults
-        if (!SUPPORTED_PROJECT_TYPES.includes(options.projectType as ProjectType)) {
+        if (options.projectType !== undefined && !SUPPORTED_PROJECT_TYPES.includes(options.projectType as ProjectType)) {
           throw new InvalidOptionError("--project-type", options.projectType ?? "", SUPPORTED_PROJECT_TYPES);
         }
 
+        const framework = options.framework ?? inspection.framework ?? "none";
+
         manifest = buildRecommendedManifest({
           name: inspection.projectName,
-          framework: options.framework ?? inspection.framework ?? "react",
-          projectType: options.projectType as ProjectType,
+          framework,
+          language: options.language ?? inspection.language,
+          projectType:
+            (options.projectType as ProjectType | undefined) ??
+            inferProjectTypeForFramework(framework),
           ...compactObject({
             targets: buildTargetFlags(options.targets),
             setup: compactObject({
@@ -142,6 +157,7 @@ export function registerInitCommand(program: Command): void {
         manifest = buildRecommendedManifest({
           name: inspection.projectName,
           framework: answers.framework,
+          language: inspection.language,
           projectType: answers.projectType,
           targets: answers.targets,
           setup: {

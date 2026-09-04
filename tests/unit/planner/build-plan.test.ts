@@ -16,7 +16,7 @@ describe("buildGenerationPlan", () => {
 
     expect(plan.files.some((file) => file.path === "AGENTS.md")).toBe(true);
     expect(plan.files.some((file) => file.path === "docs/ai-prompts/bootstrap.md")).toBe(true);
-    expect(plan.files.some((file) => file.path === ".claude/skills/build-data-table.md")).toBe(false);
+    expect(plan.files.some((file) => file.path === ".claude/skills/build-data-table/SKILL.md")).toBe(false);
   });
 
   it("still lets explicit base mode suppress prompt output", () => {
@@ -59,7 +59,7 @@ describe("buildGenerationPlan", () => {
     const plan = buildGenerationPlan(manifest);
 
     expect(plan.files.some((file) => file.path === "docs/ai-prompts/bootstrap.md")).toBe(true);
-    expect(plan.files.some((file) => file.path === ".claude/skills/build-data-table.md")).toBe(true);
+    expect(plan.files.some((file) => file.path === ".claude/skills/build-data-table/SKILL.md")).toBe(true);
     expect(plan.files.some((file) => file.path === ".claude/agents/ui-builder.md")).toBe(true);
     expect(plan.files.some((file) => file.path === ".mcp.json")).toBe(true);
     expect(plan.warnings.map((warning) => warning.code)).toContain("mcp_is_trust_sensitive");
